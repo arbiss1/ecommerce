@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@CrossOrigin()
 public class UserController {
 
-    @RequestMapping({ "/hello" })
+
+    @GetMapping( "/hello")
     public String hello() {
         return "Hello World";
     }

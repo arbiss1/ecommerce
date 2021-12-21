@@ -3,6 +3,7 @@ package ecommerce.web.app.config;
 import ecommerce.web.app.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -29,12 +30,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		final String requestTokenHeader = request.getHeader("Authorization");
-
 		String username = null;
 		String jwtToken = null;
 		// JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
 		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
 			jwtToken = requestTokenHeader.substring(7);
+			System.out.println(jwtToken);
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 			} catch (IllegalArgumentException e) {
