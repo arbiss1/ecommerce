@@ -1,11 +1,13 @@
 package ecommerce.web.app.service;
 
+import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
 import ecommerce.web.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service

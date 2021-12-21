@@ -8,13 +8,13 @@ import ecommerce.web.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -25,6 +25,16 @@ public class MainController {
 
     @Autowired
     PostService postService;
+
+    public Optional<User> getAuthenticatedUser(){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<User> userAuth = userService.findByUsername(username);
+
+        return userAuth;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@Valid @RequestBody User user,BindingResult result) {
@@ -41,12 +51,33 @@ public class MainController {
 
     @PostMapping("/post")
     public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result){
+        //get authenticated user
         if(result.hasErrors()){
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
         }
         else{
-            postService.savePost(post);
+            postService.savePost(post,getAuthenticatedUser());
             return new ResponseEntity(post,HttpStatus.ACCEPTED);
+        }
+    }
+
+    @GetMapping("/list-all-posts")
+    public ResponseEntity<Post> listAllPosts(){
+        List<Post> listOfPosts = postService.findAll();
+        if(listOfPosts.isEmpty()){
+            return new ResponseEntity("No posts available",HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity(listOfPosts,HttpStatus.ACCEPTED);
+        }
+    }
+
+    @GetMapping("/list-by-user-auth")
+    public ResponseEntity<Post> listByAuthenticatedUser(){
+        List<Post> listByAuthenticatedUser = postService.findByUserId(getAuthenticatedUser().get().getId());
+        if(listByAuthenticatedUser.isEmpty()){
+            return new ResponseEntity("No post for user" + getAuthenticatedUser().get().getUsername(),HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity(listByAuthenticatedUser,HttpStatus.ACCEPTED);
         }
     }
 }

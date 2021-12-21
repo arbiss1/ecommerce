@@ -27,16 +27,10 @@ public class Post {
     public String postQuantity;
     public String postCode;
 
-//    {
-//        "postTitle": "Makine opel corsa 1.3",
-//            "postDescription" : "Gjendja spektakel",
-//            "postPrice" : "2.5 euro",
-//            "postColor": "Blu",
-//            "postQuantity" : "1"
-//    }
+
 
     private String address;
-    private String number;
+    private long number;
     private String firstName;
     private String lastName;
 
