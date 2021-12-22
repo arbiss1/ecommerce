@@ -1,12 +1,10 @@
 package ecommerce.web.app.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -40,7 +38,7 @@ public class Post {
     private String postColor;
     private String postQuantity;
     private String postCode;
-    @NotEmpty(message = "IsInSale must not be empty")
+//    @NotEmpty(message = "IsInSale must not be empty")
     private boolean isInSale;
     @NotEmpty(message = "Slug must not be empty")
     private String postSlug;
@@ -56,8 +54,10 @@ public class Post {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn
     private User user;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_category")
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "post_category")
     @NotEmpty(message = "Category must not be empty")
-    private Categories postCategories;
+    private String postCategories;
+    private String subPostCategory;
+    private String postImageUrl;
 }

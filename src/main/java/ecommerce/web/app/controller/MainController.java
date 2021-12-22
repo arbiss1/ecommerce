@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,16 +58,16 @@ public class MainController {
     @PostMapping("/post")
     public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result){
 
-        Optional<Categories> findByCategory = categoryService.findByCategory(post.getPostCategories());
+//        Optional<Categories> findByCategory = categoryService.findByCategory(post.getPostCategories());
 
         if(result.hasErrors()){
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
         }
-        else if(!findByCategory.isPresent()) {
-            return new ResponseEntity("Category is not present",HttpStatus.CONFLICT);
-        }
+//        else if(!findByCategory.isPresent()) {
+//            return new ResponseEntity("Category is not present",HttpStatus.CONFLICT);
+//        }
         else{
-            postService.savePost(post,getAuthenticatedUser());
+            postService.savePost(post,getAuthenticatedUser(),post.getPostImageUrl(), new File(post.getPostImageUrl()));
             return new ResponseEntity(post,HttpStatus.ACCEPTED);
         }
     }
@@ -74,6 +75,11 @@ public class MainController {
     @GetMapping("/list-all-posts")
     public ResponseEntity<Post> listAllPosts(){
         List<Post> listOfPosts = postService.findAll();
+        final String[] imageUrl = {null};
+        listOfPosts.forEach(post -> {
+            imageUrl[0] = post.getPostImageUrl();
+        });
+        System.out.println(postService.getImageUploaded(imageUrl[0]));
         if(listOfPosts.isEmpty()){
             return new ResponseEntity("No posts available",HttpStatus.NO_CONTENT);
         }else {
