@@ -2,7 +2,9 @@ package ecommerce.web.app.controller;
 
 
 import ecommerce.web.app.model.Post;
+import ecommerce.web.app.model.Categories;
 import ecommerce.web.app.model.User;
+import ecommerce.web.app.service.CategoryService;
 import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class MainController {
 
     @Autowired
     PostService postService;
+
+    @Autowired
+    CategoryService categoryService;
 
     public Optional<User> getAuthenticatedUser(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
@@ -51,9 +56,14 @@ public class MainController {
 
     @PostMapping("/post")
     public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result){
-        //get authenticated user
+
+        Optional<Categories> findByCategory = categoryService.findByCategory(post.getPostCategories());
+
         if(result.hasErrors()){
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
+        }
+        else if(!findByCategory.isPresent()) {
+            return new ResponseEntity("Category is not present",HttpStatus.CONFLICT);
         }
         else{
             postService.savePost(post,getAuthenticatedUser());
@@ -71,8 +81,8 @@ public class MainController {
         }
     }
 
-    @GetMapping("/list-by-user-auth")
-    public ResponseEntity<Post> listByAuthenticatedUser(){
+    @GetMapping("/list-posts-by-user-auth")
+    public ResponseEntity<Post> listPostsByAuthenticatedUser(){
         List<Post> listByAuthenticatedUser = postService.findByUserId(getAuthenticatedUser().get().getId());
         if(listByAuthenticatedUser.isEmpty()){
             return new ResponseEntity("No post for user" + getAuthenticatedUser().get().getUsername(),HttpStatus.NO_CONTENT);
