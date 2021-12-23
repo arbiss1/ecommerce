@@ -4,6 +4,8 @@ package ecommerce.web.app.controller;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.Categories;
 import ecommerce.web.app.model.User;
+import ecommerce.web.app.model.dto.UserPostDto;
+import ecommerce.web.app.model.mapper.MapStructMapper;
 import ecommerce.web.app.service.CategoryService;
 import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
@@ -32,6 +34,9 @@ public class MainController {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    MapStructMapper mapStructMapper;
+
     public Optional<User> getAuthenticatedUser(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -42,16 +47,28 @@ public class MainController {
         return userAuth;
     }
 
+//    {
+//        "postTitle": "Maus",
+//            "postDescription" : "Super gjendje !",
+//            "postPrice":"23",
+//            "inSale":true,
+//            "postSlug":"Retails",
+//            "postAdvertIndex":"FREE",
+//            "postCurrency":"USD",
+//            "postCategories":"Home",
+//            "postImageUrl":"C:\\Users\\amalasi\\Downloads\\haha7.jpeg"
+//    }
+
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody User user,BindingResult result) {
-        Optional<User> findIfExists = userService.findByUsername(user.getUsername());
+    public ResponseEntity<Void> registerUser(@Valid @RequestBody UserPostDto userPostDto, BindingResult result) {
+        Optional<User> findIfExists = userService.findByUsername(userPostDto.getUsername());
             if (result.hasErrors()) {
                 return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
             } else if (findIfExists.isPresent()) {
                 return new ResponseEntity("Username exists", HttpStatus.CONFLICT);
             } else {
-                userService.saveUser(user);
-                return new ResponseEntity(user, HttpStatus.OK);
+                userService.saveUser(mapStructMapper.userPostDtoToUser(userPostDto));
+                return new ResponseEntity(userPostDto, HttpStatus.OK);
             }
     }
 

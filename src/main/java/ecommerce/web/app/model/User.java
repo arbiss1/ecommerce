@@ -2,6 +2,7 @@ package ecommerce.web.app.model;
 
 
 import ecommerce.web.app.annotations.ValidPassword;
+import ecommerce.web.app.model.dto.UserGetDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,13 +24,13 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id ;
 
-    @NotEmpty(message = "Username empty")
-    @NotNull(message = "Username empty")
+//    @NotEmpty(message = "Username empty")
+//    @NotNull(message = "Username empty")
     private String username;
 
-    @ValidPassword
-    @NotEmpty(message = "Password empty")
-    @NotNull(message = "Password empty")
+//    @ValidPassword
+//    @NotEmpty(message = "Password empty")
+//    @NotNull(message = "Password empty")
     private String password;
 
     private String firstName;
