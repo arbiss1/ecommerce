@@ -12,8 +12,8 @@ public class CategoryService {
 
     @Autowired
     CategoriesRepository categoriesRepository;
-
-    public Optional<Categories> findByCategory(Categories category){
-        return categoriesRepository.findByCategories(category.getCategories());
-    }
+//
+//    public Optional<Categories> findByCategory(Categories category){
+//        return categoriesRepository.findByCategories(category.getCategories());
+//    }
 }

@@ -11,6 +11,7 @@ import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,18 +48,6 @@ public class MainController {
         return userAuth;
     }
 
-//    {
-//        "postTitle": "Maus",
-//            "postDescription" : "Super gjendje !",
-//            "postPrice":"23",
-//            "inSale":true,
-//            "postSlug":"Retails",
-//            "postAdvertIndex":"FREE",
-//            "postCurrency":"USD",
-//            "postCategories":"Home",
-//            "postImageUrl":"C:\\Users\\amalasi\\Downloads\\haha7.jpeg"
-//    }
-
     @PostMapping("/register")
     public ResponseEntity<Void> registerUser(@Valid @RequestBody UserPostDto userPostDto, BindingResult result) {
         Optional<User> findIfExists = userService.findByUsername(userPostDto.getUsername());
@@ -72,7 +61,7 @@ public class MainController {
             }
     }
 
-    @PostMapping("/post")
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE , value = "/post")
     public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result){
 
 //        Optional<Categories> findByCategory = categoryService.findByCategory(post.getPostCategories());
@@ -84,7 +73,7 @@ public class MainController {
 //            return new ResponseEntity("Category is not present",HttpStatus.CONFLICT);
 //        }
         else{
-            postService.savePost(post,getAuthenticatedUser(),post.getPostImageUrl(), new File(post.getPostImageUrl()));
+            postService.savePost(post,getAuthenticatedUser(),post.getPostImageUrl());
             return new ResponseEntity(post,HttpStatus.ACCEPTED);
         }
     }
@@ -94,9 +83,8 @@ public class MainController {
         List<Post> listOfPosts = postService.findAll();
         final String[] imageUrl = {null};
         listOfPosts.forEach(post -> {
-            imageUrl[0] = post.getPostImageUrl();
+//            imageUrl[0] = post.getPostImageUrl();
         });
-        System.out.println(postService.getImageUploaded(imageUrl[0]));
         if(listOfPosts.isEmpty()){
             return new ResponseEntity("No posts available",HttpStatus.NO_CONTENT);
         }else {

@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface CategoriesRepository extends JpaRepository<Categories,Long> {
 
-    Optional<Categories> findByCategories(String category);
+//    Optional<Categories> findByCategories(String category);
 }

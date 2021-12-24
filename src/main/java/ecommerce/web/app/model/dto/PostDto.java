@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ecommerce.web.app.model.Categories;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
+import ecommerce.web.app.model.enums.AdvertIndex;
+import ecommerce.web.app.model.enums.Currency;
 import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class PostDto {
@@ -29,9 +32,9 @@ public class PostDto {
     private String postSlug;
     private LocalDate postDate;
     private LocalTime postTime;
-    private Post.Currency postCurrency;
+    private Currency postCurrency;
     @NotNull(message = "Advert Index must not be empty")
-    private Post.AdvertIndex postAdvertIndex;
+    private AdvertIndex postAdvertIndex;
     private String address;
     private long number;
     private String firstName;
@@ -40,5 +43,5 @@ public class PostDto {
     private UserGetDto user;
     private String postCategories;
     private String subPostCategory;
-    private String postImageUrl;
+    private List<String> postImageUrl;
 }
