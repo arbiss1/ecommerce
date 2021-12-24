@@ -3,6 +3,7 @@ package ecommerce.web.app.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import ecommerce.web.app.model.ImageUpload;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
 import ecommerce.web.app.model.mapper.MapStructMapper;
@@ -32,23 +33,32 @@ public class PostService {
             "api_key", "966843127668939",
             "api_secret", "dqIiglHTAoRuYD2j887wmCk56vU"));
 
-    public Object postImageUpload(String absoluteFilePath){
-        File file = new File(absoluteFilePath);
-        Map uploadResult = null;
-        {
-            try {
-                uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap
-                        (
-                                "transformation",new Transformation().width(3840).height(2160).quality(60).crop("pad").background("auto")));
-            } catch (IOException e) {
-                e.printStackTrace();
+    public List<ImageUpload> postImageUpload(List<ImageUpload> absoluteFilePath){
+        List<Object> transferUrlsToStorage = new ArrayList<>();
+        absoluteFilePath.forEach(imageUpload -> {
+            File file = new File(imageUpload.getImageUrl());
+            Map uploadResult = null;
+            {
+                try {
+                    uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap
+                            (
+                                    "transformation",new Transformation().width(3840).height(2160).quality(60).crop("pad").background("auto")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        return uploadResult.get("secure_url");
+            transferUrlsToStorage.add(uploadResult.get("secure_url"));
+        });
+        final int[] count = {0};
+        transferUrlsToStorage.forEach(o -> {
+            absoluteFilePath.get(count[0]++).setImageUrl(o.toString());
+        });
+
+        return absoluteFilePath;
     }
 
-    public Post savePost(Post post, Optional<User> userAuth, String absolutePath){
-        String secureImageCloudinaryUrl = String.valueOf(postImageUpload(absolutePath));
+    public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls){
+        List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
         post.setAddress(userAuth.get().getAddress());
         post.setFirstName(userAuth.get().getFirstName());
         post.setLastName(userAuth.get().getLastName());
@@ -56,7 +66,7 @@ public class PostService {
         post.setUser(userAuth.get());
         post.setPostDate(date);
         post.setPostTime(time);
-        post.setPostImageUrl(secureImageCloudinaryUrl);
+        post.setPostImageUrl(uploadImagesToCloudinary);
         return postRepository.save(post);
     }
 

@@ -5,6 +5,9 @@ import ecommerce.web.app.model.enums.Currency;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -46,9 +49,9 @@ public class Post {
 //            inverseJoinColumns = {@JoinColumn(name = "subcategory_id", referencedColumnName = "post_id")})
 //    @MapKeyJoinColumn(name = "details_id")
 //    Map<Categories, SubCategories> details;
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    private List<ImageUpload> postImageUrl;
-
-    private String postImageUrl;
-
+    @Size(max = 10, min = 1)
+    @NotEmpty(message = "Images must not be empty")
+    @NotNull(message = "Images must not be empty")
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<ImageUpload> postImageUrl;
 }

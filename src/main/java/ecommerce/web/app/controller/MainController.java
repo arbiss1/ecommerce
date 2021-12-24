@@ -1,6 +1,7 @@
 package ecommerce.web.app.controller;
 
 
+import ecommerce.web.app.model.ImageUpload;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.Categories;
 import ecommerce.web.app.model.User;
@@ -73,7 +74,8 @@ public class MainController {
 //            return new ResponseEntity("Category is not present",HttpStatus.CONFLICT);
 //        }
         else{
-            postService.savePost(post,getAuthenticatedUser(),post.getPostImageUrl());
+            List<ImageUpload> postsImageUrls = post.getPostImageUrl();
+            postService.savePost(post,getAuthenticatedUser(),postsImageUrls);
             return new ResponseEntity(post,HttpStatus.ACCEPTED);
         }
     }
