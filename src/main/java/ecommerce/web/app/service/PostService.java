@@ -3,18 +3,23 @@ package ecommerce.web.app.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import ecommerce.web.app.model.ImageUpload;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
 import ecommerce.web.app.model.mapper.MapStructMapper;
 import ecommerce.web.app.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class PostService {
@@ -42,7 +47,7 @@ public class PostService {
                 try {
                     uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap
                             (
-                                    "transformation",new Transformation().width(3840).height(2160).quality(60).crop("pad").background("auto")));
+                                    "transformation",new Transformation().width(2840).height(1650).quality(40).crop("pad").background("auto")));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

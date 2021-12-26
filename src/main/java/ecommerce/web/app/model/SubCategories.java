@@ -13,5 +13,6 @@ public class SubCategories {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "post_id")
     private long subcategoryId;
-//    private List<String> subcategories;
+
+    private String subcategoryName;
 }

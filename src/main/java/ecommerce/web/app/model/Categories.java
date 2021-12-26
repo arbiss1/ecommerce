@@ -17,8 +17,8 @@ public class Categories {
 
     private String categoryName;
 
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "details_id")
-//    private List<SubCategories> subCategories;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "psot_subcategory")
+    private List<SubCategories> subCategories;
 
 }

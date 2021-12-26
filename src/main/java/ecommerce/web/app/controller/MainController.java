@@ -63,7 +63,7 @@ public class MainController {
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE , value = "/post")
-    public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result){
+    public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result) throws InterruptedException {
 
 //        Optional<Categories> findByCategory = categoryService.findByCategory(post.getPostCategories());
 
@@ -83,10 +83,6 @@ public class MainController {
     @GetMapping("/list-all-posts")
     public ResponseEntity<Post> listAllPosts(){
         List<Post> listOfPosts = postService.findAll();
-        final String[] imageUrl = {null};
-        listOfPosts.forEach(post -> {
-//            imageUrl[0] = post.getPostImageUrl();
-        });
         if(listOfPosts.isEmpty()){
             return new ResponseEntity("No posts available",HttpStatus.NO_CONTENT);
         }else {

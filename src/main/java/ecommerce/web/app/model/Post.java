@@ -22,12 +22,19 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "post_id")
     private long postId;
+
+    @NotEmpty(message = "Title must not be empty")
     private String postTitle;
+
+    @NotEmpty(message = "Description must not be empty")
     private String postDescription;
+
+    @NotEmpty(message = "Price must not be empty")
     private String postPrice;
     private String postColor;
-    private String postQuantity;
     private String postCode;
+
+    @NotEmpty(message = "IsInSale must not be empty")
     private boolean isInSale;
     private String postSlug;
     private LocalDate postDate;
@@ -35,6 +42,7 @@ public class Post {
     //enum
     private Currency postCurrency;
     //enum
+    @NotNull(message = "Advert Index must not be empty")
     private AdvertIndex postAdvertIndex;
     private String address;
     private long number;
@@ -43,15 +51,15 @@ public class Post {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn
     private User user;
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinTable(name = "category_subcategory_mapping",
-//            joinColumns = {@JoinColumn(name = "category_id", referencedColumnName = "post_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "subcategory_id", referencedColumnName = "post_id")})
-//    @MapKeyJoinColumn(name = "details_id")
-//    Map<Categories, SubCategories> details;
+
     @Size(max = 10, min = 1)
     @NotEmpty(message = "Images must not be empty")
     @NotNull(message = "Images must not be empty")
     @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "post_image_uploads")
     private List<ImageUpload> postImageUrl;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "post_category")
+    private List<Categories> categories;
 }
