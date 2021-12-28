@@ -3,7 +3,6 @@ package ecommerce.web.app.model;
 import ecommerce.web.app.model.enums.AdvertIndex;
 import ecommerce.web.app.model.enums.Currency;
 import lombok.Data;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "post")
@@ -47,10 +45,9 @@ public class Post {
     private long number;
     private String firstName;
     private String lastName;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn
     private User user;
-
     @Size(max = 5, min = 1)
     @NotEmpty(message = "Images must not be empty")
     @NotNull(message = "Images must not be empty")

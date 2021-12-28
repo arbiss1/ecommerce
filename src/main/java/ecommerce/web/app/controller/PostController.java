@@ -6,6 +6,7 @@ import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.mapper.MapStructMapper;
 import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
+import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class PostController {
     public ResponseEntity<Post> listPostsByAuthenticatedUser(){
         List<Post> listByAuthenticatedUser = postService.findByUserId(userService.getAuthenticatedUser().get().getId());
         if(listByAuthenticatedUser.isEmpty()){
-            return new ResponseEntity("No post for user" + userService.getAuthenticatedUser().get().getUsername(),HttpStatus.NO_CONTENT);
+            return new ResponseEntity("There are no posts made by " + userService.getAuthenticatedUser().get().getUsername(),HttpStatus.NO_CONTENT);
         }else {
             return new ResponseEntity(listByAuthenticatedUser,HttpStatus.ACCEPTED);
         }
@@ -68,12 +69,23 @@ public class PostController {
             return new ResponseEntity(result.getAllErrors(),HttpStatus.CONFLICT);
         }
         else if(findPost.equals("")){
-            return new ResponseEntity("Post not found",HttpStatus.NO_CONTENT);
+            return new ResponseEntity("Not found",HttpStatus.NO_CONTENT);
         }
         else {
             List<ImageUpload> postsImageUrls = post.getPostImageUrl();
             postService.editPost(postId,post,userService.getAuthenticatedUser(),postsImageUrls);
             return new ResponseEntity(post,HttpStatus.ACCEPTED);
+        }
+    }
+
+    @DeleteMapping("/delete-post/{postId}")
+    public ResponseEntity<Post> deletePost(@PathVariable(name = "postId") long postId){
+        Post findPost = postService.findByPostId(postId);
+        if(findPost.equals("")){
+            return new ResponseEntity("Not found" ,HttpStatus.NO_CONTENT);
+        }else {
+            postService.deleteById(postId);
+            return new ResponseEntity("Deleted successfully",HttpStatus.ACCEPTED);
         }
     }
 }

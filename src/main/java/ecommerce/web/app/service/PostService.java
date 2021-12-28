@@ -25,9 +25,6 @@ public class PostService {
     @Autowired
     MapStructMapper mapStructMapper;
 
-    @Autowired
-    ImageUploadService imageUploadService;
-
     LocalDate date = LocalDate.now();
     LocalTime time = LocalTime.now();
 
@@ -73,10 +70,10 @@ public class PostService {
     public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls){
         List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
         post.setAddress(userAuth.get().getAddress());
+        post.setUser(userAuth.get());
         post.setFirstName(userAuth.get().getFirstName());
         post.setLastName(userAuth.get().getLastName());
         post.setNumber(userAuth.get().getNumber());
-        post.setUser(userAuth.get());
         post.setPostDate(date);
         post.setPostTime(time);
         post.setPostImageUrl(uploadImagesToCloudinary);
@@ -106,14 +103,16 @@ public class PostService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+//                imageUploadService.deleteImageUploaded(imageUpload.getId());
             });
+//            postRepository.deleteByPostImageUrl(findPost.getPostImageUrl());
             List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
             post.setPostId(postId);
+            post.setUser(authenticatedUser.get());
             post.setAddress(authenticatedUser.get().getAddress());
             post.setFirstName(authenticatedUser.get().getFirstName());
             post.setLastName(authenticatedUser.get().getLastName());
             post.setNumber(authenticatedUser.get().getNumber());
-            post.setUser(authenticatedUser.get());
             post.setPostDate(date);
             post.setPostTime(time);
             post.setPostImageUrl(uploadImagesToCloudinary);
@@ -122,5 +121,8 @@ public class PostService {
         else {
             return post;
         }
+    }
+    public void deleteById(long postId) {
+        postRepository.deleteById(postId);
     }
 }
