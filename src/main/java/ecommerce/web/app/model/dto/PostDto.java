@@ -1,14 +1,10 @@
 package ecommerce.web.app.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ecommerce.web.app.model.Categories;
-import ecommerce.web.app.model.Post;
-import ecommerce.web.app.model.User;
 import ecommerce.web.app.model.enums.AdvertIndex;
 import ecommerce.web.app.model.enums.Currency;
 import lombok.Data;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

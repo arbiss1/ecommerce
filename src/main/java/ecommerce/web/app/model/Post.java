@@ -32,9 +32,8 @@ public class Post {
     @NotEmpty(message = "Price must not be empty")
     private String postPrice;
     private String postColor;
-    private String postCode;
+    private long postCode;
 
-    @NotEmpty(message = "IsInSale must not be empty")
     private boolean isInSale;
     private String postSlug;
     private LocalDate postDate;
@@ -52,14 +51,12 @@ public class Post {
     @JoinColumn
     private User user;
 
-    @Size(max = 10, min = 1)
+    @Size(max = 5, min = 1)
     @NotEmpty(message = "Images must not be empty")
     @NotNull(message = "Images must not be empty")
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "post_image_uploads")
     private List<ImageUpload> postImageUrl;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "post_category")
-    private List<Categories> categories;
+    private String postCategory;
+    private String postSubcategory;
 }
