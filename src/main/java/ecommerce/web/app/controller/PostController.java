@@ -6,7 +6,6 @@ import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.mapper.MapStructMapper;
 import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
-import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin
 public class PostController {
 
     @Autowired

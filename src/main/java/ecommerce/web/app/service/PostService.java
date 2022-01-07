@@ -8,6 +8,7 @@ import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
 import ecommerce.web.app.model.mapper.MapStructMapper;
 import ecommerce.web.app.repository.PostRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.File;
@@ -33,7 +34,7 @@ public class PostService {
             "api_key", "966843127668939",
             "api_secret", "dqIiglHTAoRuYD2j887wmCk56vU"));
 
-    public List<ImageUpload> postImageUpload(List<ImageUpload> absoluteFilePath){
+    public List<ImageUpload> postImageUpload(@NotNull List<ImageUpload> absoluteFilePath){
         List<Object> transferUrlsToStorage = new ArrayList<>();
         absoluteFilePath.forEach(imageUpload -> {
             File file = new File(imageUpload.getImageUrl());
@@ -65,7 +66,6 @@ public class PostService {
                 cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
 
             }
-
 
     public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls){
         List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
@@ -118,10 +118,12 @@ public class PostService {
             post.setPostImageUrl(uploadImagesToCloudinary);
             return postRepository.save(post);
         }
+        //s
         else {
             return post;
         }
     }
+
     public void deleteById(long postId) {
         postRepository.deleteById(postId);
     }
