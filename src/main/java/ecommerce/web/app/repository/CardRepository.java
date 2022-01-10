@@ -11,14 +11,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card,Long> {
 
 
-    @Query(nativeQuery = true,value = "SELECT sum(total_price) FROM ecommerce.card")
-    long getTotalPrice();
+    @Query(nativeQuery = true,value = "SELECT sum(total_price) FROM ecommerce.card WHERE ordered_by_user = :user_id")
+    int getTotalPrice(@Param(value = "user_id")long user_id);
 
     @Modifying
     @Transactional

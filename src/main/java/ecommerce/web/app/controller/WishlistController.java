@@ -29,9 +29,7 @@ public class WishlistController {
     @GetMapping("/show-wishlist")
     public ResponseEntity showWishlist(){
         User authenticatedUser = userService.getAuthenticatedUser().get();
-
         List<Wishlist> wishlistByUserAuthenticated = wishlistService.findWishlistByUser(authenticatedUser);
-
         if(wishlistByUserAuthenticated.isEmpty()){
             return new ResponseEntity("Wishlist is empty",HttpStatus.NO_CONTENT);
         }else {
@@ -41,11 +39,8 @@ public class WishlistController {
 
     @PostMapping("/add-to-wishlist/{postId}")
     public ResponseEntity addToWishlist(@PathVariable(name = "postId") long postId){
-
         Post findPost =  postService.findByPostId(postId);
-
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
-
         if(findPost.equals("") || getAuthenticatedUser.equals("")){
             return new ResponseEntity("No post or user authenticated found !",HttpStatus.NO_CONTENT);
         }else {
@@ -56,9 +51,7 @@ public class WishlistController {
     @DeleteMapping("/remove-from-wishlist/{postId}")
     public ResponseEntity removeFromWishlist(@PathVariable(name = "postId") long postId){
         Post findPost =  postService.findByPostId(postId);
-
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
-
         if(findPost.equals("") || getAuthenticatedUser.equals("")){
             return new ResponseEntity("No post or user authenticated found !",HttpStatus.NO_CONTENT);
         }else {

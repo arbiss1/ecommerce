@@ -3,11 +3,9 @@ package ecommerce.web.app.service;
 import ecommerce.web.app.model.Card;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
-import ecommerce.web.app.model.Wishlist;
 import ecommerce.web.app.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
