@@ -3,6 +3,7 @@ package ecommerce.web.app.service;
 import ecommerce.web.app.model.Card;
 import ecommerce.web.app.model.Post;
 import ecommerce.web.app.model.User;
+import ecommerce.web.app.model.Wishlist;
 import ecommerce.web.app.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,23 @@ public class CardService {
         card.setUser(authenticatedUser);
         card.setTotalPrice(post.getPostPrice());
         System.out.println(post.getPostPrice());
-        System.out.println(cardRepository.getTotalPrice() + Integer.valueOf(post.getPostPrice()));
+//        if (cardRepository.getTotalPrice() == "") {
+//            System.out.println(0 + Integer.valueOf(post.getPostPrice()));
+//        } else {
+//            System.out.println(cardRepository.getTotalPrice() + Integer.valueOf(post.getPostPrice()));
+//        }
         return cardRepository.save(card);
     }
 
-    public void removeFromCard(long cardId){
-        cardRepository.deleteById(cardId);
+    public void removeFromCard(Card card){
+        cardRepository.removeFromCard(card.getCardId());
     }
 
+    public Card findCardByUserAndPost(User getAuthenticatedUser, Post findPost) {
+        return cardRepository.findCardByUserAndPost(getAuthenticatedUser,findPost);
+    }
+
+    public List<Card> findByUser(User getAuthenticatedUser) {
+        return cardRepository.findCardsByUser(getAuthenticatedUser);
+    }
 }
