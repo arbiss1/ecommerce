@@ -26,10 +26,9 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> registerUser(@Valid @RequestBody UserPostDto userPostDto, BindingResult result) {
-        Optional<User> findIfExists = userService.findByUsername(userPostDto.getUsername());
         if (result.hasErrors()) {
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
-        } else if (findIfExists.isPresent()) {
+        } else if (userService.isUsernamePresent(mapStructMapper.userPostDtoToUser(userPostDto))) {
             return new ResponseEntity("Username exists", HttpStatus.CONFLICT);
         } else {
             userService.saveUser(mapStructMapper.userPostDtoToUser(userPostDto));

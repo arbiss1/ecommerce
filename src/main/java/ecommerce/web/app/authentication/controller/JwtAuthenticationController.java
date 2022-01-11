@@ -3,6 +3,7 @@ package ecommerce.web.app.authentication.controller;
 import ecommerce.web.app.authentication.service.JwtTokenUtil;
 import ecommerce.web.app.authentication.model.JwtResponse;
 import ecommerce.web.app.domain.user.model.User;
+import ecommerce.web.app.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,18 +29,23 @@ public class JwtAuthenticationController {
 	@Autowired
 	private UserDetailsService jwtInMemoryUserDetailsService;
 
+	@Autowired
+	UserService userService;
+
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity createAuthenticationToken(@RequestBody User authenticationRequest)
 			throws Exception {
 
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+//		if(!userService.isUserValid(authenticationRequest)){
+//			return new ResponseEntity("Username or password is incorrect", HttpStatus.CONFLICT);
+			authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-		final UserDetails userDetails = jwtInMemoryUserDetailsService
-				.loadUserByUsername(authenticationRequest.getUsername());
+			final UserDetails userDetails = jwtInMemoryUserDetailsService
+					.loadUserByUsername(authenticationRequest.getUsername());
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
+			final String token = jwtTokenUtil.generateToken(userDetails);
 
-		return ResponseEntity.ok(new JwtResponse(token));
+			return ResponseEntity.ok(new JwtResponse(token));
 	}
 
 	private void authenticate(String username, String password) throws Exception {

@@ -29,7 +29,9 @@ public class CardController {
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
         Card findIfPostAlreadyExists = cardService.findCardByUserAndPost(getAuthenticatedUser,findPost);
         if(!(findIfPostAlreadyExists == null)){
-            return new ResponseEntity("Post is already added to card",HttpStatus.CONFLICT);
+            return new ResponseEntity("This item is already saved to your card",HttpStatus.CONFLICT);
+        }else if(findPost.equals("") || findPost == null){
+            return new ResponseEntity("Post not found",HttpStatus.NO_CONTENT);
         }else {
             return new ResponseEntity(cardService.addToCard(findPost, getAuthenticatedUser), HttpStatus.ACCEPTED);
         }

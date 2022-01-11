@@ -103,9 +103,7 @@ public class PostService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                imageUploadService.deleteImageUploaded(imageUpload.getId());
             });
-//            postRepository.deleteByPostImageUrl(findPost.getPostImageUrl());
             List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
             post.setPostId(postId);
             post.setUser(authenticatedUser.get());
@@ -118,7 +116,6 @@ public class PostService {
             post.setPostImageUrl(uploadImagesToCloudinary);
             return postRepository.save(post);
         }
-        //s
         else {
             return post;
         }
