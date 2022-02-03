@@ -37,4 +37,12 @@ public class WishlistService {
     public List<Wishlist> findWishlistByUser(User authenticatedUser){
         return wishlistRepository.findWishlistByUser(authenticatedUser);
     }
+
+    public List<Wishlist> searchWishlist(String keyword){
+        return wishlistRepository.searchWishlistByPostLike(keyword);
+    }
+
+    public List<Wishlist> findAll() {
+        return wishlistRepository.findAll();
+    }
 }

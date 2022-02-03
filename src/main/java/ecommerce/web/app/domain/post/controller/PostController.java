@@ -6,7 +6,10 @@ import ecommerce.web.app.domain.post.model.Post;
 import ecommerce.web.app.domain.post.service.PostService;
 import ecommerce.web.app.mapper.MapStructMapper;
 import ecommerce.web.app.domain.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import javafx.geometry.Pos;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,14 +22,15 @@ import java.util.List;
 @CrossOrigin
 public class PostController {
 
-    @Autowired
-    UserService userService;
+   public final UserService userService;
+   public final PostService postService;
+   public final MapStructMapper mapStructMapper;
 
-    @Autowired
-    PostService postService;
-
-    @Autowired
-    MapStructMapper mapStructMapper;
+    public PostController(UserService userService,PostService postService,MapStructMapper mapStructMapper){
+        this.userService = userService;
+        this.postService = postService;
+        this.mapStructMapper = mapStructMapper;
+    }
 
 
 
@@ -43,12 +47,27 @@ public class PostController {
     }
 
     @GetMapping("/list-all-posts")
-    public ResponseEntity<Post> listAllPosts(){
-        List<Post> listOfPosts = postService.findAll();
+    public ResponseEntity<Post> listAllPosts() throws IllegalAccessException {
+        Pageable firstPageWithTwoElements = PageRequest.of(0,3);
+        Page<Post> listOfPosts = postService.findAll(firstPageWithTwoElements);
         if(listOfPosts.isEmpty()){
-            return new ResponseEntity("No posts available",HttpStatus.NO_CONTENT);
+            throw new IllegalAccessException("No posts available");
         }else {
             return new ResponseEntity(listOfPosts,HttpStatus.ACCEPTED);
+        }
+    }
+
+    @GetMapping("/search-post")
+    public ResponseEntity<Post> searchPosts(@RequestParam String keyword){
+        List<Post> seachForPosts = postService.searchPosts(keyword);
+        if(keyword.equals("") || keyword.equals(" ") ||
+           keyword.equals(null)){
+            return new ResponseEntity(postService.findAll(),HttpStatus.ACCEPTED);
+        }else if( seachForPosts.isEmpty()){
+            return new ResponseEntity("No posts found",HttpStatus.NO_CONTENT);
+        }
+        else {
+            return new ResponseEntity(seachForPosts,HttpStatus.ACCEPTED);
         }
     }
 

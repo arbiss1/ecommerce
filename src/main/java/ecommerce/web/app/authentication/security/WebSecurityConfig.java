@@ -49,14 +49,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
+	private static final String[] AUTH_WHITELIST = {
+			"/authenticate",
+			"/swagger-resources/**",
+			"/swagger-ui/**",
+			"/v2/api-docs",
+			"/webjars/**"
+	};
+
+
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
-				.authorizeRequests().antMatchers("/authenticate").permitAll()
+				.authorizeRequests()
+				.antMatchers(AUTH_WHITELIST).permitAll()
+				.antMatchers("/authenticate").permitAll()
 				.antMatchers("/login").permitAll()
 				.antMatchers("/register").permitAll()
 				.antMatchers("/list-all-posts").permitAll()
+				.antMatchers("/search-post").permitAll()
+				.antMatchers("/show-wishlist").permitAll()
+
 				// all other requests need to be authenticated
 				.anyRequest().authenticated().and().
 				// make sure we use stateless session; session won't be used to
