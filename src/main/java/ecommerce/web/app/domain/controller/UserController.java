@@ -3,8 +3,9 @@ package ecommerce.web.app.domain.controller;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.domain.model.User;
 import ecommerce.web.app.domain.model.dto.UserPostDto;
+import ecommerce.web.app.exception.UserNotFoundException;
+import ecommerce.web.app.i18n.MessageByLocaleImpl;
 import ecommerce.web.app.mapper.MapStructMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,19 +19,27 @@ import java.util.Optional;
 @RestController
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    public final UserService userService;
+    public final MapStructMapper mapStructMapper;
+    public final MessageByLocaleImpl messageByLocale;
 
-    @Autowired
-    MapStructMapper mapStructMapper;
+    public UserController(UserService userService,
+                          MapStructMapper mapStructMapper,
+                          MessageByLocaleImpl messageByLocale){
+        this.mapStructMapper = mapStructMapper;
+        this.userService = userService;
+        this.messageByLocale = messageByLocale;
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@Valid @RequestBody UserPostDto userPostDto, BindingResult result) {
+    public ResponseEntity<Void> registerUser(@Valid @RequestBody UserPostDto userPostDto,
+                                             BindingResult result) throws UserNotFoundException {
         Optional<User> findIfExists = userService.findByUsername(userPostDto.getUsername());
         if (result.hasErrors()) {
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
         } else if (findIfExists.isPresent()) {
-            return new ResponseEntity("Username exists", HttpStatus.CONFLICT);
+            throw new UserNotFoundException(
+                    messageByLocale.getMessage("error.409.userExists"));
         } else {
             userService.saveUser(mapStructMapper.userPostDtoToUser(userPostDto));
             return new ResponseEntity(userPostDto, HttpStatus.OK);

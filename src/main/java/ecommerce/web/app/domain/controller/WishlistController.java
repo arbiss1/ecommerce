@@ -6,31 +6,38 @@ import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.domain.service.WishlistService;
 import ecommerce.web.app.domain.model.Wishlist;
-import org.springframework.beans.factory.annotation.Autowired;
+import ecommerce.web.app.exception.FavoritesCustomException;
+import ecommerce.web.app.i18n.MessageByLocaleImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class WishlistController {
 
-    @Autowired
-    PostService postService;
+    public final PostService postService;
+    public final UserService userService;
+    public final WishlistService wishlistService;
+    public final MessageByLocaleImpl messageByLocale;
 
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    WishlistService wishlistService;
+    public WishlistController(PostService postService, UserService userService,
+                              WishlistService wishlistService,MessageByLocaleImpl messageByLocale){
+        this.postService = postService;
+        this.userService = userService;
+        this.wishlistService = wishlistService;
+        this.messageByLocale = messageByLocale;
+    }
 
 
 
     @GetMapping("/show-wishlist")
     public ResponseEntity showWishlist(){
         User authenticatedUser = userService.getAuthenticatedUser().get();
-        List<Wishlist> wishlistByUserAuthenticated = wishlistService.findWishlistByUser(authenticatedUser);
+        List<Wishlist> wishlistByUserAuthenticated =
+                wishlistService.findWishlistByUser(authenticatedUser);
         if(wishlistByUserAuthenticated.isEmpty()){
             return new ResponseEntity("Wishlist is empty",HttpStatus.NO_CONTENT);
         }else {
@@ -53,24 +60,31 @@ public class WishlistController {
     }
 
     @PostMapping("/add-to-wishlist/{postId}")
-    public ResponseEntity addToWishlist(@PathVariable(name = "postId") long postId){
-        Post findPost =  postService.findByPostId(postId);
+    public ResponseEntity addToWishlist(@PathVariable(name = "postId") String postId)
+            throws FavoritesCustomException {
+        Optional<Post> findPost =  postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
-        if(findPost.equals("") || getAuthenticatedUser.equals("")){
-            return new ResponseEntity("No post or user authenticated found !",HttpStatus.NO_CONTENT);
+        if(!findPost.isPresent() || getAuthenticatedUser.equals("")){
+            throw new FavoritesCustomException(
+                    messageByLocale.getMessage("error.404.postNotFound"));
         }else {
-            return new ResponseEntity(wishlistService.saveWishlist(findPost,getAuthenticatedUser), HttpStatus.ACCEPTED);
+            Post getFoundPost = findPost.get();
+            return new ResponseEntity(wishlistService.saveWishlist(getFoundPost,getAuthenticatedUser), HttpStatus.ACCEPTED);
         }
     }
 
     @DeleteMapping("/remove-from-wishlist/{postId}")
-    public ResponseEntity removeFromWishlist(@PathVariable(name = "postId") long postId){
-        Post findPost =  postService.findByPostId(postId);
+    public ResponseEntity removeFromWishlist(@PathVariable(name = "postId") String postId)
+            throws FavoritesCustomException {
+        Optional<Post> findPost =  postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
-        if(findPost.equals("") || getAuthenticatedUser.equals("")){
-            return new ResponseEntity("No post or user authenticated found !",HttpStatus.NO_CONTENT);
+        if(!findPost.isPresent() || getAuthenticatedUser.equals("")){
+            throw new FavoritesCustomException(
+                    messageByLocale.getMessage("error.404.postNotFound"));
         }else {
-            Wishlist findWishlistByPostAndUser  = wishlistService.findWishlistByUserAndPost(getAuthenticatedUser,findPost);
+            Post getFoundPost = findPost.get();
+            Wishlist findWishlistByPostAndUser  = wishlistService.findWishlistByUserAndPost(
+                    getAuthenticatedUser,getFoundPost);
             if(findWishlistByPostAndUser.equals("")){
                 return new ResponseEntity("No wishlist found",HttpStatus.NO_CONTENT);
             }else {

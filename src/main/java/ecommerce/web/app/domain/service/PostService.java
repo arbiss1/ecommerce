@@ -86,20 +86,20 @@ public class PostService {
         post.setUser(userAuth.get());
         post.setFirstName(userAuth.get().getFirstName());
         post.setLastName(userAuth.get().getLastName());
-        post.setNumber(userAuth.get().getNumber());
-        post.setPostDate(date);
-        post.setPostTime(time);
-        post.setPostImageUrl(uploadImagesToCloudinary);
-        post.setPostStatus(PostStatus.PENDING);
+        post.setPhone_number(userAuth.get().getNumber());
+        post.setDate(date);
+        post.setTime(time);
+        post.setImageUrls(uploadImagesToCloudinary);
+        post.setStatus(PostStatus.PENDING);
         return postRepository.save(post);
     }
 
     public Post changeStatusToActive(Post post, Optional<User> userAuth){
-        Post findIfPostExist = postRepository.findByPostId(post.getPostId());
-        if(!findIfPostExist.equals("") || !findIfPostExist.equals(null)){
-            post.setPostStatus(PostStatus.ACTIVE);
+        Optional<Post> findIfPostExist = postRepository.findById(post.getId());
+        if(findIfPostExist.isPresent()){
+            post.setStatus(PostStatus.ACTIVE);
         }else {
-            post.setPostStatus(PostStatus.PENDING);
+            post.setStatus(PostStatus.PENDING);
         }
         return postRepository.save(post);
     }
@@ -116,14 +116,15 @@ public class PostService {
         return postRepository.findByUserId(userId);
     }
 
-    public Post findByPostId(long postId) {
-        return postRepository.findByPostId(postId);
+    public Optional<Post> findByPostId(String postId) {
+        return postRepository.findById(postId);
     }
 
-    public Post editPost(long postId,Post post, Optional<User> authenticatedUser,List<ImageUpload> postsImageUrls) {
-        Post findPost = postRepository.findByPostId(postId);
-        if(!findPost.equals("")){
-            findPost.getPostImageUrl().forEach(imageUpload -> {
+    public Post editPost(String postId,Post post, Optional<User> authenticatedUser,List<ImageUpload> postsImageUrls) {
+        Optional<Post> findPost = postRepository.findById(postId);
+        if(!findPost.isPresent()){
+            Post ediatblePost = findPost.get();
+            ediatblePost.getImageUrls().forEach(imageUpload -> {
                 String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
                 String publicId = imageTag.substring(0 , imageTag.lastIndexOf("."));
                 try {
@@ -133,24 +134,23 @@ public class PostService {
                 }
             });
             List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-            post.setPostId(postId);
+            post.setId(postId);
             post.setUser(authenticatedUser.get());
             post.setAddress(authenticatedUser.get().getAddress());
             post.setFirstName(authenticatedUser.get().getFirstName());
             post.setLastName(authenticatedUser.get().getLastName());
-            post.setNumber(authenticatedUser.get().getNumber());
-            post.setPostDate(date);
-            post.setPostTime(time);
-            post.setPostImageUrl(uploadImagesToCloudinary);
+            post.setPhone_number(authenticatedUser.get().getNumber());
+            post.setDate(date);
+            post.setTime(time);
+            post.setImageUrls(uploadImagesToCloudinary);
             return postRepository.save(post);
         }
-        //s
         else {
             return post;
         }
     }
 
-    public void deleteById(long postId) {
+    public void deleteById(String postId) {
         postRepository.deleteById(postId);
     }
 }

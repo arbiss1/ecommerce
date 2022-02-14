@@ -24,8 +24,8 @@ public class CardService {
         card.setDate(date);
         card.setPost(post);
         card.setUser(authenticatedUser);
-        card.setTotalPrice(post.getPostPrice());
-        System.out.println(post.getPostPrice());
+        card.setTotalPrice(post.getPrice());
+        System.out.println(post.getPrice());
 //        if (cardRepository.getTotalPrice() == "") {
 //            System.out.println(0 + Integer.valueOf(post.getPostPrice()));
 //        } else {

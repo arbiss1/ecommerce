@@ -19,14 +19,17 @@ import java.util.Objects;
 @CrossOrigin
 public class JwtAuthenticationController {
 
-	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-
-	@Autowired
 	private UserDetailsService jwtInMemoryUserDetailsService;
+
+	public JwtAuthenticationController(AuthenticationManager authenticationManager,
+									   JwtTokenUtil jwtTokenUtil,
+										UserDetailsService jwtInMemoryUserDetailsService){
+		this.authenticationManager = authenticationManager;
+		this.jwtTokenUtil = jwtTokenUtil;
+		this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity createAuthenticationToken(@RequestBody User authenticationRequest)

@@ -1,21 +1,20 @@
 package ecommerce.web.app.domain.repository;
 
-import ecommerce.web.app.domain.model.ImageUpload;
 import ecommerce.web.app.domain.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface PostRepository extends JpaRepository<Post,Long> {
+public interface PostRepository extends JpaRepository<Post,String> {
     List<Post> findByUserId(long userId);
 
-    Post findByPostId(long postId);
+    Optional<Post> findById(String postId);
 
-    @Transactional
-    Post deleteByPostImageUrl(ImageUpload imageUrls);
+//    @Transactional
+//    Post deleteByPostImageUrl(ImageUpload imageUrls);
 
 //    Page<Post> findAll(Pageable pageable);
 
