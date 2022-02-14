@@ -6,7 +6,6 @@ import ecommerce.web.app.domain.post.model.Post;
 import ecommerce.web.app.domain.post.service.PostService;
 import ecommerce.web.app.mapper.MapStructMapper;
 import ecommerce.web.app.domain.user.service.UserService;
-import javafx.geometry.Pos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +31,6 @@ public class PostController {
         this.mapStructMapper = mapStructMapper;
     }
 
-
-
     @PostMapping("/post")
     public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result) throws InterruptedException {
         if(result.hasErrors()){
@@ -43,6 +40,18 @@ public class PostController {
             List<ImageUpload> postsImageUrls = post.getPostImageUrl();
             postService.savePost(post,userService.getAuthenticatedUser(),postsImageUrls);
             return new ResponseEntity(post,HttpStatus.ACCEPTED);
+        }
+    }
+
+    @PostMapping("/post/status-change")
+    public ResponseEntity<Post> changePostStatusToActive(@RequestParam(value = "postId") long postId) throws IllegalAccessException {
+        Post findPostById = postService.findByPostId(postId);
+        if(findPostById.equals(null) || findPostById.equals("")){
+            throw new IllegalAccessException("Post not found");
+        }
+        else
+        {
+            return new ResponseEntity(postService.changeStatusToActive(findPostById,userService.getAuthenticatedUser()),HttpStatus.OK);
         }
     }
 

@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -52,18 +53,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] AUTH_WHITELIST = {
 			"/authenticate",
 			"/swagger-resources/**",
-			"/swagger-ui/**",
+			"/doc/**",
+			"/doc/v2/**",
 			"/v2/api-docs",
-			"/webjars/**"
+			"/webjars/**",
+			"/swagger-ui/**",
+			"/swagger-ui.html",
+			"/springfox-swagger-ui/**"
 	};
 
 
-	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
+
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
 				.authorizeRequests()
 				.antMatchers(AUTH_WHITELIST).permitAll()
+				.antMatchers("/doc/v2/js/**", "/css/**").permitAll()
 				.antMatchers("/authenticate").permitAll()
 				.antMatchers("/login").permitAll()
 				.antMatchers("/register").permitAll()

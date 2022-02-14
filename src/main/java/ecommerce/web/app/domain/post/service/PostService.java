@@ -3,6 +3,7 @@ package ecommerce.web.app.domain.post.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import ecommerce.web.app.domain.post.enums.PostStatus;
 import ecommerce.web.app.domain.post.model.ImageUpload;
 import ecommerce.web.app.domain.post.model.Post;
 import ecommerce.web.app.domain.post.repository.PostRepository;
@@ -91,6 +92,17 @@ public class PostService {
         post.setPostDate(date);
         post.setPostTime(time);
         post.setPostImageUrl(uploadImagesToCloudinary);
+        post.setPostStatus(PostStatus.PENDING);
+        return postRepository.save(post);
+    }
+
+    public Post changeStatusToActive(Post post, Optional<User> userAuth){
+        Post findIfPostExist = postRepository.findByPostId(post.getPostId());
+        if(!findIfPostExist.equals("") || !findIfPostExist.equals(null)){
+            post.setPostStatus(PostStatus.ACTIVE);
+        }else {
+            post.setPostStatus(PostStatus.PENDING);
+        }
         return postRepository.save(post);
     }
 
@@ -121,9 +133,7 @@ public class PostService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                imageUploadService.deleteImageUploaded(imageUpload.getId());
             });
-//            postRepository.deleteByPostImageUrl(findPost.getPostImageUrl());
             List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
             post.setPostId(postId);
             post.setUser(authenticatedUser.get());
