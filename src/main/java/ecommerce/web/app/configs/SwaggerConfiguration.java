@@ -29,7 +29,7 @@ public class SwaggerConfiguration {
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("ecommerce.web.app.domain.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(metaInfo());
