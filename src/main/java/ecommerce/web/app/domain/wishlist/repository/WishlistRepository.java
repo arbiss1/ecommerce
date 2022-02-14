@@ -21,6 +21,8 @@ public interface WishlistRepository extends JpaRepository<Wishlist,Long> {
 
     List<Wishlist> findWishlistByUser(User authenticatedUser);
 
+    List<Wishlist> searchWishlistByPostLike(String keyword);
+
     @Modifying
     @Transactional
     @Query(nativeQuery = true , value = "DELETE FROM ecommerce.wishlist WHERE wishlist_id = :wishlistId ;")

@@ -1,5 +1,6 @@
 package ecommerce.web.app.domain.post.model;
 
+import ecommerce.web.app.domain.post.enums.PostStatus;
 import ecommerce.web.app.domain.user.model.User;
 import ecommerce.web.app.domain.post.enums.AdvertIndex;
 import ecommerce.web.app.domain.post.enums.Currency;
@@ -57,4 +58,6 @@ public class Post {
     private List<ImageUpload> postImageUrl;
     private String postCategory;
     private String postSubcategory;
+    //every new post will have pending status till its reviewed
+    private PostStatus postStatus;
 }

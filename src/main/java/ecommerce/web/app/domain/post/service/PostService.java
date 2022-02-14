@@ -3,6 +3,7 @@ package ecommerce.web.app.domain.post.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import ecommerce.web.app.domain.post.enums.PostStatus;
 import ecommerce.web.app.domain.post.model.ImageUpload;
 import ecommerce.web.app.domain.post.model.Post;
 import ecommerce.web.app.domain.post.repository.PostRepository;
@@ -10,12 +11,20 @@ import ecommerce.web.app.domain.user.model.User;
 import ecommerce.web.app.mapper.MapStructMapper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PostService {
@@ -29,11 +38,13 @@ public class PostService {
     LocalDate date = LocalDate.now();
     LocalTime time = LocalTime.now();
 
+
     Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
             "cloud_name", "dxrixqpjg",
             "api_key", "966843127668939",
             "api_secret", "dqIiglHTAoRuYD2j887wmCk56vU"));
 
+    @Async
     public List<ImageUpload> postImageUpload(@NotNull List<ImageUpload> absoluteFilePath){
         List<Object> transferUrlsToStorage = new ArrayList<>();
         absoluteFilePath.forEach(imageUpload -> {
@@ -61,6 +72,10 @@ public class PostService {
       }
     }
 
+    public Page<Post> findAll(Pageable pageable){
+        return postRepository.findAll(pageable);
+    }
+
     public void deleteImage(String publicId) throws IOException {
 
                 cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
@@ -77,11 +92,26 @@ public class PostService {
         post.setPostDate(date);
         post.setPostTime(time);
         post.setPostImageUrl(uploadImagesToCloudinary);
+        post.setPostStatus(PostStatus.PENDING);
+        return postRepository.save(post);
+    }
+
+    public Post changeStatusToActive(Post post, Optional<User> userAuth){
+        Post findIfPostExist = postRepository.findByPostId(post.getPostId());
+        if(!findIfPostExist.equals("") || !findIfPostExist.equals(null)){
+            post.setPostStatus(PostStatus.ACTIVE);
+        }else {
+            post.setPostStatus(PostStatus.PENDING);
+        }
         return postRepository.save(post);
     }
 
     public List<Post> findAll() {
       return postRepository.findAll();
+    }
+
+    public List<Post> searchPosts(String keyword){
+        return postRepository.searchPosts(keyword);
     }
 
     public List<Post> findByUserId(long userId) {
@@ -103,9 +133,7 @@ public class PostService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-//                imageUploadService.deleteImageUploaded(imageUpload.getId());
             });
-//            postRepository.deleteByPostImageUrl(findPost.getPostImageUrl());
             List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
             post.setPostId(postId);
             post.setUser(authenticatedUser.get());

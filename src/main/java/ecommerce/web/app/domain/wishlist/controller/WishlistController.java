@@ -26,6 +26,7 @@ public class WishlistController {
     WishlistService wishlistService;
 
 
+
     @GetMapping("/show-wishlist")
     public ResponseEntity showWishlist(){
         User authenticatedUser = userService.getAuthenticatedUser().get();
@@ -34,6 +35,20 @@ public class WishlistController {
             return new ResponseEntity("Wishlist is empty",HttpStatus.NO_CONTENT);
         }else {
             return new ResponseEntity(wishlistByUserAuthenticated,HttpStatus.ACCEPTED);
+        }
+    }
+
+    @GetMapping("/search-wishlist")
+    public ResponseEntity searchWishlist(@RequestParam String keyword){
+        List<Wishlist> searchForWishlists = wishlistService.searchWishlist(keyword);
+        if(keyword.equals("") || keyword.equals(" ") ||
+                keyword.equals(null)){
+            return new ResponseEntity(wishlistService.findAll(),HttpStatus.ACCEPTED);
+        }else if(searchForWishlists.isEmpty()){
+            return new ResponseEntity("No posts found",HttpStatus.NO_CONTENT);
+        }
+        else {
+            return new ResponseEntity(searchForWishlists,HttpStatus.ACCEPTED);
         }
     }
 
