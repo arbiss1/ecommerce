@@ -1,8 +1,8 @@
 package ecommerce.web.app.mapper;
 
-import ecommerce.web.app.domain.user.model.User;
-import ecommerce.web.app.dto.UserGetDto;
-import ecommerce.web.app.dto.UserPostDto;
+import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.domain.model.dto.UserGetDto;
+import ecommerce.web.app.domain.model.dto.UserPostDto;
 import org.springframework.stereotype.Component;
 
 @Component
