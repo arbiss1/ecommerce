@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImageUploadService {
 
-    @Autowired
-    ImageUploadRepository imageUploadRepository;
+    public final ImageUploadRepository imageUploadRepository;
+
+    public ImageUploadService(ImageUploadRepository imageUploadRepository){
+        this.imageUploadRepository = imageUploadRepository;
+    }
 
     public void deleteImageUploaded(long id){
         imageUploadRepository.deleteById(id);

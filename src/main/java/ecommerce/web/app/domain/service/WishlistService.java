@@ -13,8 +13,11 @@ import java.util.List;
 @Service
 public class WishlistService {
 
-    @Autowired
-    WishlistRepository wishlistRepository;
+    public final WishlistRepository wishlistRepository;
+
+    public WishlistService(WishlistRepository wishlistRepository){
+        this.wishlistRepository = wishlistRepository;
+    }
 
     public Wishlist saveWishlist(Post post, User user){
         Wishlist wishlist = new Wishlist();

@@ -13,10 +13,12 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
-
+    public final UserRepository userRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public List<User> listAll(){
         userRepository.findAll().forEach(user -> {

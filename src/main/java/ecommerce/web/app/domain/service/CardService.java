@@ -13,8 +13,11 @@ import java.util.List;
 @Service
 public class CardService {
 
-    @Autowired
-    CardRepository cardRepository;
+    public final CardRepository cardRepository;
+
+    public CardService(CardRepository cardRepository){
+        this.cardRepository = cardRepository;
+    }
 
     public Card addToCard(Post post, User authenticatedUser){
         Card card = new Card();
