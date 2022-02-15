@@ -1,7 +1,5 @@
 package ecommerce.web.app.domain.model;
 
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "wishlist")
-public class Wishlist {
+public class Favorites {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
