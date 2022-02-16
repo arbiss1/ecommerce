@@ -1,7 +1,6 @@
 package ecommerce.web.app.domain.model;
 
 
-import ecommerce.web.app.annotations.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +33,7 @@ public class User implements Serializable {
     private String city;
     private String country;
     private String email;
-    private long phoneNumber;
+    private String phoneNumber;
     private String address;
     private String role;
 }

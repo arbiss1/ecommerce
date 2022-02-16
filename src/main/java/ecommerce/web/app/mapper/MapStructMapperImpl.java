@@ -19,7 +19,7 @@ public class MapStructMapperImpl implements MapStructMapper{
         userGetDto.setId(user.getId());
         userGetDto.setAddress(user.getAddress());
         userGetDto.setFirstName(user.getFirstName());
-        userGetDto.setNumber(user.getPhoneNumber());
+        userGetDto.setPhoneNumber(user.getPhoneNumber());
         userGetDto.setUsername(user.getUsername());
         userGetDto.setLastName(userGetDto.getLastName());
         userGetDto.setRole(userGetDto.getRole());
@@ -37,7 +37,7 @@ public class MapStructMapperImpl implements MapStructMapper{
         user.setId(userGetDto.getId());
         user.setAddress(userGetDto.getAddress());
         user.setFirstName(userGetDto.getFirstName());
-        user.setPhoneNumber(userGetDto.getNumber());
+        user.setPhoneNumber(userGetDto.getPhoneNumber());
         user.setUsername(userGetDto.getUsername());
         user.setLastName(userGetDto.getLastName());
         user.setRole(userGetDto.getRole());
@@ -60,6 +60,9 @@ public class MapStructMapperImpl implements MapStructMapper{
         user.setUsername(userPostDto.getUsername());
         user.setLastName(userPostDto.getLastName());
         user.setRole(userPostDto.getRole());
+        user.setCity(userPostDto.getCity());
+        user.setCountry(userPostDto.getCountry());
+        user.setEmail(userPostDto.getEmail());
         user.setPassword(userPostDto.getPassword());
 
         return user;

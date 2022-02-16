@@ -18,8 +18,8 @@ public interface PostRepository extends JpaRepository<Post,String> {
 
 //    Page<Post> findAll(Pageable pageable);
 
-    @Query(nativeQuery = true,value = "SELECT * FROM ecommerce.post WHERE post_title LIKE %:keyword% " +
-            "OR post_category LIKE %:keyword% OR post_subcategory LIKE %:keyword%")
+    @Query(nativeQuery = true,value = "SELECT * FROM ecommerce.post WHERE title LIKE %:keyword% " +
+            "OR category LIKE %:keyword% OR subcategory LIKE %:keyword% OR description LIKE %:keyword%")
     List<Post> searchPosts(@Param("keyword") String keyword);
 
 }

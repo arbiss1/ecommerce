@@ -86,7 +86,7 @@ public class PostService {
         post.setUser(userAuth.get());
         post.setFirstName(userAuth.get().getFirstName());
         post.setLastName(userAuth.get().getLastName());
-        post.setPhone_number(userAuth.get().getPhoneNumber());
+        post.setPhoneNumber(userAuth.get().getPhoneNumber());
         post.setCity(userAuth.get().getCity());
         post.setCountry(userAuth.get().getCountry());
         post.setDate(date);
@@ -141,7 +141,7 @@ public class PostService {
             post.setAddress(authenticatedUser.get().getAddress());
             post.setFirstName(authenticatedUser.get().getFirstName());
             post.setLastName(authenticatedUser.get().getLastName());
-            post.setPhone_number(authenticatedUser.get().getPhoneNumber());
+            post.setPhoneNumber(authenticatedUser.get().getPhoneNumber());
             post.setDate(date);
             post.setTime(time);
             post.setImageUrls(uploadImagesToCloudinary);

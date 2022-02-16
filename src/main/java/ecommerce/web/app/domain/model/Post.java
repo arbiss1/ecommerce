@@ -3,6 +3,7 @@ package ecommerce.web.app.domain.model;
 import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "post_id")
     private String id = UUID.randomUUID().toString();
     @NotEmpty(message = "Title must not be empty")
@@ -34,12 +35,13 @@ public class Post {
     private LocalDate date;
     private LocalTime time;
     private Currency currency;
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "Advert Index must not be empty")
     private AdvertIndex postAdvertIndex;
     @NotBlank(message = "Address must not be null")
     private String address;
     @NotBlank(message = "Phone number must not be null")
-    private long phone_number;
+    private String phoneNumber;
     @NotBlank(message = "First name must not be null")
     private String firstName;
     @NotBlank(message = "Last name must not be null")

@@ -21,8 +21,8 @@ public class UserGetDto {
     @JsonProperty("address")
     private String address;
 
-    @JsonProperty("number")
-    private long number;
+    @JsonProperty("phoneNumber")
+    private String phoneNumber;
 
     @JsonProperty("role")
     private String role;
