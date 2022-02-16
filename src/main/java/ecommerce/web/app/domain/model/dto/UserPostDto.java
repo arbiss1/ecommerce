@@ -33,8 +33,17 @@ public class UserPostDto {
     @JsonProperty("address")
     private String address;
 
-    @JsonProperty("number")
-    private long number;
+    @JsonProperty("city")
+    private String city;
+
+    @JsonProperty("country")
+    private long country;
+
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("phoneNumber")
+    private long phoneNumber;
 
     @JsonProperty("role")
     private String role;

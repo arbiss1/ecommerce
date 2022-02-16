@@ -22,23 +22,19 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id ;
-
     @NotEmpty(message = "Username empty")
     @NotNull(message = "Username empty")
     private String username;
-
-    @ValidPassword
+//    @ValidPassword
     @NotEmpty(message = "Password empty")
     @NotNull(message = "Password empty")
     private String password;
-
     private String firstName;
-
     private String lastName;
-
+    private String city;
+    private String country;
+    private String email;
+    private long phoneNumber;
     private String address;
-
-    private long number;
-
     private String role;
 }
