@@ -1,7 +1,7 @@
 package ecommerce.web.app.authentication.service;
 
-import ecommerce.web.app.domain.user.model.User;
-import ecommerce.web.app.domain.user.repository.UserRepository;
+import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,8 +15,11 @@ import java.util.Arrays;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public JwtUserDetailsService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
