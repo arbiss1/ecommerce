@@ -1,4 +1,4 @@
-package ecommerce.web.app.i18n;
+package ecommerce.web.app.i18nConfig;
 
 interface MessageByLocale {
 

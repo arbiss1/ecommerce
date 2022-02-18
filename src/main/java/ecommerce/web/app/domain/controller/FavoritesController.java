@@ -8,7 +8,7 @@ import ecommerce.web.app.domain.service.FavoritesService;
 import ecommerce.web.app.domain.model.Favorites;
 import ecommerce.web.app.exception.FavoritesCustomException;
 import ecommerce.web.app.exception.PostCustomException;
-import ecommerce.web.app.i18n.MessageByLocaleImpl;
+import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

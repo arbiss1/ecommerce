@@ -4,7 +4,7 @@ import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.domain.model.User;
 import ecommerce.web.app.domain.model.dto.UserPostDto;
 import ecommerce.web.app.exception.UserNotFoundException;
-import ecommerce.web.app.i18n.MessageByLocaleImpl;
+import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import ecommerce.web.app.mapper.MapStructMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,7 +3,7 @@ package ecommerce.web.app.domain.controller;
 
 import ecommerce.web.app.domain.model.ImageUpload;
 import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.i18n.MessageByLocaleImpl;
+import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.exception.PostCustomException;
 import ecommerce.web.app.mapper.MapStructMapper;
