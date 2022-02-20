@@ -1,7 +1,7 @@
 package ecommerce.web.app.mapper;
 
 import ecommerce.web.app.domain.model.User;
-import ecommerce.web.app.domain.model.dto.UserGetDto;
+import ecommerce.web.app.domain.model.dto.UserLoginRequest;
 import ecommerce.web.app.domain.model.dto.UserPostDto;
 import org.springframework.stereotype.Component;
 
@@ -10,41 +10,19 @@ public class MapStructMapperImpl implements MapStructMapper{
 
 
     @Override
-    public UserGetDto userToUserGetDto(User user) {
-        if (user == null) {
-            return null;
-        }
-        UserGetDto userGetDto = new UserGetDto();
-
-        userGetDto.setId(user.getId());
-        userGetDto.setAddress(user.getAddress());
-        userGetDto.setFirstName(user.getFirstName());
-        userGetDto.setPhoneNumber(user.getPhoneNumber());
-        userGetDto.setUsername(user.getUsername());
-        userGetDto.setLastName(userGetDto.getLastName());
-        userGetDto.setRole(userGetDto.getRole());
-
-        return userGetDto;
-
-    }
-    @Override
-    public User userGetDtoToUser(UserGetDto userGetDto) {
-        if (userGetDto == null) {
+    public User dtoToUser(UserLoginRequest userLoginRequest) {
+        if (userLoginRequest == null) {
             return null;
         }
         User user = new User();
 
-        user.setId(userGetDto.getId());
-        user.setAddress(userGetDto.getAddress());
-        user.setFirstName(userGetDto.getFirstName());
-        user.setPhoneNumber(userGetDto.getPhoneNumber());
-        user.setUsername(userGetDto.getUsername());
-        user.setLastName(userGetDto.getLastName());
-        user.setRole(userGetDto.getRole());
+        user.setUsername(userLoginRequest.getUsername());
+        user.setPassword(userLoginRequest.getPassword());
 
         return user;
 
     }
+
 
     @Override
     public User userPostDtoToUser(UserPostDto userPostDto) {

@@ -30,7 +30,7 @@ public class PostDto {
     private String firstName;
     private String lastName;
     @JsonProperty("user")
-    private UserGetDto user;
+    private UserLoginRequest user;
     private String postCategories;
     private String subPostCategory;
     private List<String> postImageUrl;

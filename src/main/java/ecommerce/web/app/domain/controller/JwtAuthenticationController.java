@@ -2,8 +2,7 @@ package ecommerce.web.app.domain.controller;
 
 import ecommerce.web.app.authentication.service.JwtTokenUtil;
 import ecommerce.web.app.authentication.model.JwtResponse;
-import ecommerce.web.app.domain.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import ecommerce.web.app.domain.model.dto.UserLoginRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,8 +30,8 @@ public class JwtAuthenticationController {
 		this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
 	}
 
-	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseEntity createAuthenticationToken(@RequestBody User authenticationRequest)
+	@PostMapping(value = "/authenticate")
+	public ResponseEntity createAuthenticationToken(@RequestBody UserLoginRequest authenticationRequest)
 			throws Exception {
 
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
