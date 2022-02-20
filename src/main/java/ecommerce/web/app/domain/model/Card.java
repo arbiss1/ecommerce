@@ -8,11 +8,7 @@ import java.time.LocalTime;
 @Entity
 @Data
 @Table(name = "card")
-public class Card {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long cardId;
+public class Card extends BaseEntity  {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "post_id")
@@ -23,9 +19,5 @@ public class Card {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "ordered_by_user")
     private User user;
-
-    private LocalTime time;
-
-    private LocalDate date;
 
 }

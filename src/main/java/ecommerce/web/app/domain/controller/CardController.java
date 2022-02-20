@@ -35,7 +35,7 @@ public class CardController {
     }
 
     @PostMapping("/add-to-card/{postId}")
-    public ResponseEntity addToCard(@PathVariable(name = "postId") String postId)
+    public ResponseEntity addToCard(@PathVariable(name = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);
         if(!findPost.isPresent()){
@@ -56,7 +56,7 @@ public class CardController {
     }
 
     @DeleteMapping("/remove-from-card/{postId}")
-    public ResponseEntity removeFromCard(@PathVariable(name = "postId") String postId)
+    public ResponseEntity removeFromCard(@PathVariable(name = "postId") long postId)
             throws PostCustomException, CardCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();

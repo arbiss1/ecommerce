@@ -14,13 +14,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user")
-public class User implements Serializable {
+public class User extends BaseEntity {
 
     private static final long serialVersionUID = 5926468583005150707L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id ;
     @NotEmpty(message = "Username empty")
     @NotNull(message = "Username empty")
     private String username;

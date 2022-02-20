@@ -7,6 +7,7 @@ import ecommerce.web.app.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -21,10 +22,10 @@ public class CardService {
 
     public Card addToCard(Post post, User authenticatedUser){
         Card card = new Card();
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
-        card.setTime(time);
-        card.setDate(date);
+        card.setCreatedBy(authenticatedUser.getUsername());
+        card.setCreatedDate(LocalDateTime.now());
+        card.setLastModifiedDate(LocalDateTime.now());
+        card.setLastModifiedBy(authenticatedUser.getUsername());
         card.setPost(post);
         card.setUser(authenticatedUser);
         card.setTotalPrice(post.getPrice());
@@ -38,7 +39,7 @@ public class CardService {
     }
 
     public void removeFromCard(Card card){
-        cardRepository.removeFromCard(card.getCardId());
+        cardRepository.removeFromCard(card.getId());
     }
 
     public Card findCardByUserAndPost(User getAuthenticatedUser, Post findPost) {

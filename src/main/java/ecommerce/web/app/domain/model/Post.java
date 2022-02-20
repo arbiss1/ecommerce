@@ -3,27 +3,20 @@ package ecommerce.web.app.domain.model;
 import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "post")
 @Data
-public class Post {
+public class Post extends BaseEntity {
 
-    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "post_id")
-    private String id = UUID.randomUUID().toString();
     @NotEmpty(message = "Title must not be empty")
     private String title;
     @NotEmpty(message = "Description must not be empty")
@@ -32,8 +25,7 @@ public class Post {
     private String price;
     private boolean isInSale;
     private String slug;
-    private LocalDate date;
-    private LocalTime time;
+    @Enumerated(EnumType.STRING)
     private Currency currency;
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Advert Index must not be empty")

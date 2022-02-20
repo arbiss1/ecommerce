@@ -3,11 +3,13 @@ package ecommerce.web.app.domain.controller;
 
 import ecommerce.web.app.domain.model.ImageUpload;
 import ecommerce.web.app.domain.model.Post;
+import ecommerce.web.app.domain.model.dto.PostRequest;
 import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.exception.PostCustomException;
-import ecommerce.web.app.mapper.MapStructMapper;
+import ecommerce.web.app.domain.model.mapper.MapStructMapper;
 import ecommerce.web.app.domain.service.UserService;
+import javafx.geometry.Pos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,20 +40,21 @@ public class PostController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Post> post(@Valid @RequestBody Post post, BindingResult result)
+    public ResponseEntity<Post> post(@Valid @RequestBody PostRequest post, BindingResult result)
             throws InterruptedException {
         if(result.hasErrors()){
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
         }
         else{
             List<ImageUpload> postsImageUrls = post.getImageUrls();
-            postService.savePost(post,userService.getAuthenticatedUser(),postsImageUrls);
-            return new ResponseEntity(post,HttpStatus.ACCEPTED);
+            return new ResponseEntity(postService.savePost(mapStructMapper.postDtoToPost(post)
+                    ,userService.getAuthenticatedUser(),postsImageUrls)
+                    ,HttpStatus.ACCEPTED);
         }
     }
 
     @PostMapping("/post/status-change")
-    public ResponseEntity<Post> changePostStatusToActive(@RequestParam(value = "postId") String postId)
+    public ResponseEntity<Post> changePostStatusToActive(@RequestParam(value = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPostById = postService.findByPostId(postId);
         if(!findPostById.isPresent()){
@@ -107,8 +110,8 @@ public class PostController {
     }
 
     @PutMapping("/edit-post/{postId}")
-    public ResponseEntity<Post> editPost(@PathVariable (name = "postId") String postId ,
-                                         @RequestBody Post post,BindingResult result)
+    public ResponseEntity<Post> editPost(@PathVariable (name = "postId") long postId ,
+                                         @RequestBody PostRequest post, BindingResult result)
                                          throws PostCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);
         if(result.hasErrors()){
@@ -119,13 +122,14 @@ public class PostController {
         }
         else {
             List<ImageUpload> postsImageUrls = post.getImageUrls();
-            postService.editPost(postId,post,userService.getAuthenticatedUser(),postsImageUrls);
-            return new ResponseEntity(post,HttpStatus.ACCEPTED);
+            return new ResponseEntity(postService.editPost(postId,mapStructMapper.postDtoToPost(post),
+                    userService.getAuthenticatedUser(),postsImageUrls)
+                    ,HttpStatus.ACCEPTED);
         }
     }
 
     @DeleteMapping("/delete-post/{postId}")
-    public ResponseEntity<Post> deletePost(@PathVariable(name = "postId") String postId)
+    public ResponseEntity<Post> deletePost(@PathVariable(name = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);
         if(!findPost.isPresent()){

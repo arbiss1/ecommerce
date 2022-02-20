@@ -63,7 +63,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/add-to-favorites/{postId}")
-    public ResponseEntity addToWishlist(@PathVariable(name = "postId") String postId)
+    public ResponseEntity addToWishlist(@PathVariable(name = "postId") long postId)
             throws FavoritesCustomException {
         Optional<Post> findPost =  postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
@@ -78,7 +78,7 @@ public class FavoritesController {
     }
 
     @DeleteMapping("/remove-from-favorites/{postId}")
-    public ResponseEntity removeFromWishlist(@PathVariable(name = "postId") String postId)
+    public ResponseEntity removeFromWishlist(@PathVariable(name = "postId") long postId)
             throws FavoritesCustomException, PostCustomException {
         Optional<Post> findPost =  postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();

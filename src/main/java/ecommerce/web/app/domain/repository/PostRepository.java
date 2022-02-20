@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostRepository extends JpaRepository<Post,String> {
+public interface PostRepository extends JpaRepository<Post,Long> {
     List<Post> findByUserId(long userId);
 
-    Optional<Post> findById(String postId);
+    Optional<Post> findById(long postId);
 
 //    @Transactional
 //    Post deleteByPostImageUrl(ImageUpload imageUrls);

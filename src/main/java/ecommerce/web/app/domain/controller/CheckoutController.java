@@ -1,4 +1,4 @@
-package ecommerce.web.app.domain.model;
+package ecommerce.web.app.domain.controller;
 
 import ecommerce.web.app.domain.model.ChargeRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +24,5 @@ public class CheckoutController {
         }else {
             return new ResponseEntity(chargeRequest,HttpStatus.ACCEPTED);
         }
-//        model.addAttribute("amount", 50 * 100); // in cents
-//        model.addAttribute("stripePublicKey", stripePublicKey);
-//        model.addAttribute("currency", ChargeRequest.Currency.EUR);
     }
 }

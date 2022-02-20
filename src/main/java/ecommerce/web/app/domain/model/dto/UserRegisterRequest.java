@@ -2,16 +2,14 @@ package ecommerce.web.app.domain.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ecommerce.web.app.annotations.ValidPassword;
+import ecommerce.web.app.domain.model.BaseEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UserPostDto {
-
-    @JsonProperty("id")
-    private long id ;
+public class UserRegisterRequest {
 
     @JsonProperty("username")
     @NotEmpty(message = "Username empty")
@@ -20,8 +18,6 @@ public class UserPostDto {
 
     @JsonProperty("password")
     @ValidPassword
-//    @NotEmpty(message = "Password empty")
-//    @NotNull(message = "Password empty")
     private String password;
 
     @JsonProperty("firstName")
@@ -45,6 +41,4 @@ public class UserPostDto {
     @JsonProperty("phoneNumber")
     private String phoneNumber;
 
-    @JsonProperty("role")
-    private String role;
 }

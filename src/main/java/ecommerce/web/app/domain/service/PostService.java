@@ -3,12 +3,14 @@ package ecommerce.web.app.domain.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.model.ImageUpload;
 import ecommerce.web.app.domain.model.Post;
 import ecommerce.web.app.domain.repository.PostRepository;
 import ecommerce.web.app.domain.model.User;
-import ecommerce.web.app.mapper.MapStructMapper;
+import ecommerce.web.app.domain.model.mapper.MapStructMapper;
+import ecommerce.web.app.exception.PostCustomException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -82,17 +85,21 @@ public class PostService {
 
     public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls){
         List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-        post.setAddress(userAuth.get().getAddress());
-        post.setUser(userAuth.get());
-        post.setFirstName(userAuth.get().getFirstName());
-        post.setLastName(userAuth.get().getLastName());
-        post.setPhoneNumber(userAuth.get().getPhoneNumber());
-        post.setCity(userAuth.get().getCity());
-        post.setCountry(userAuth.get().getCountry());
-        post.setDate(date);
-        post.setTime(time);
+        User getAuthenticatedUser = userAuth.get();
+        post.setUser(getAuthenticatedUser);
+        post.setAddress(getAuthenticatedUser.getAddress());
+        post.setFirstName(getAuthenticatedUser.getFirstName());
+        post.setLastName(getAuthenticatedUser.getLastName());
+        post.setPhoneNumber(getAuthenticatedUser.getPhoneNumber());
+        post.setCity(getAuthenticatedUser.getCity());
+        post.setCountry(getAuthenticatedUser.getCountry());
+        post.setCreatedDate(LocalDateTime.now());
+        post.setCreatedBy(getAuthenticatedUser.getUsername());
+        post.setLastModifiedBy(getAuthenticatedUser.getUsername());
+        post.setLastModifiedDate(LocalDateTime.now());
         post.setImageUrls(uploadImagesToCloudinary);
         post.setStatus(PostStatus.PENDING);
+        post.setPostAdvertIndex(AdvertIndex.FREE);
         return postRepository.save(post);
     }
 
@@ -118,11 +125,11 @@ public class PostService {
         return postRepository.findByUserId(userId);
     }
 
-    public Optional<Post> findByPostId(String postId) {
+    public Optional<Post> findByPostId(long postId) {
         return postRepository.findById(postId);
     }
 
-    public Post editPost(String postId,Post post, Optional<User> authenticatedUser,List<ImageUpload> postsImageUrls) {
+    public Post editPost(long postId,Post post, Optional<User> authenticatedUser,List<ImageUpload> postsImageUrls) throws PostCustomException {
         Optional<Post> findPost = postRepository.findById(postId);
         if(!findPost.isPresent()){
             Post ediatblePost = findPost.get();
@@ -142,17 +149,17 @@ public class PostService {
             post.setFirstName(authenticatedUser.get().getFirstName());
             post.setLastName(authenticatedUser.get().getLastName());
             post.setPhoneNumber(authenticatedUser.get().getPhoneNumber());
-            post.setDate(date);
-            post.setTime(time);
+            post.setLastModifiedBy(authenticatedUser.get().getUsername());
+            post.setLastModifiedDate(LocalDateTime.now());
             post.setImageUrls(uploadImagesToCloudinary);
             return postRepository.save(post);
         }
         else {
-            return post;
+            throw new PostCustomException("sbehet gje");
         }
     }
 
-    public void deleteById(String postId) {
+    public void deleteById(long postId) {
         postRepository.deleteById(postId);
     }
 }
