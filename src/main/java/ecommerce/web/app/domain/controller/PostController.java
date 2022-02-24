@@ -71,8 +71,8 @@ public class PostController {
 
     @GetMapping("/list-all-posts")
     public ResponseEntity<Post> listAllPosts() throws PostCustomException {
-        Pageable firstPageWithTwoElements = PageRequest.of(0,3);
-        Page<Post> listOfPosts = postService.findAll(firstPageWithTwoElements);
+//        Pageable firstPageWithTwoElements = PageRequest.of(0,3);
+        List<Post> listOfPosts = postService.findAll();
         if(listOfPosts.isEmpty()){
             throw new PostCustomException(
                     messageByLocale.getMessage("error.404.postNotFound"));

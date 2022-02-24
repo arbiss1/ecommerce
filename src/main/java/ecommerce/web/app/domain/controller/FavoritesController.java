@@ -37,10 +37,10 @@ public class FavoritesController {
 
 
     @GetMapping("/show-favorites")
-    public ResponseEntity showWishlist(){
+    public ResponseEntity showFavorites(){
         User authenticatedUser = userService.getAuthenticatedUser().get();
         List<Favorites> favoritesByUserAuthenticated =
-                favoritesService.findWishlistByUser(authenticatedUser);
+                favoritesService.findFavoritesByUser(authenticatedUser);
         if(favoritesByUserAuthenticated.isEmpty()){
             return new ResponseEntity("Wishlist is empty",HttpStatus.NO_CONTENT);
         }else {
@@ -63,7 +63,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/add-to-favorites/{postId}")
-    public ResponseEntity addToWishlist(@PathVariable(name = "postId") long postId)
+    public ResponseEntity addToFavorites(@PathVariable(name = "postId") long postId)
             throws FavoritesCustomException {
         Optional<Post> findPost =  postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
@@ -72,13 +72,13 @@ public class FavoritesController {
                     messageByLocale.getMessage("error.404.postNotFound"));
         }else {
             Post getFoundPost = findPost.get();
-            return new ResponseEntity(favoritesService.saveWishlist(
+            return new ResponseEntity(favoritesService.addToFavorites(
                     getFoundPost,getAuthenticatedUser), HttpStatus.ACCEPTED);
         }
     }
 
     @DeleteMapping("/remove-from-favorites/{postId}")
-    public ResponseEntity removeFromWishlist(@PathVariable(name = "postId") long postId)
+    public ResponseEntity removeFromFavorites(@PathVariable(name = "postId") long postId)
             throws FavoritesCustomException, PostCustomException {
         Optional<Post> findPost =  postService.findByPostId(postId);
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
@@ -93,7 +93,7 @@ public class FavoritesController {
                 throw new FavoritesCustomException(
                         messageByLocale.getMessage("error.404.noFavoritesFound"));
             }else {
-                favoritesService.deleteWishlist(findFavoritesByPostAndUser);
+                favoritesService.deleteFavorites(findFavoritesByPostAndUser);
                 return new ResponseEntity("Removed successfully from wishlist",
                         HttpStatus.ACCEPTED);
             }

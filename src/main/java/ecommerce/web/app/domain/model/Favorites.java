@@ -6,15 +6,12 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "wishlist")
-public class Favorites {
+@Table(name = "favorites")
+public class Favorites extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long wishlistId;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "post")
+    @JoinColumn(name = "post_id")
     private Post post ;
 
     @ManyToOne(cascade = CascadeType.MERGE)

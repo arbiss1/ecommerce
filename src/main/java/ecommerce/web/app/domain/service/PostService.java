@@ -11,11 +11,14 @@ import ecommerce.web.app.domain.repository.PostRepository;
 import ecommerce.web.app.domain.model.User;
 import ecommerce.web.app.domain.model.mapper.MapStructMapper;
 import ecommerce.web.app.exception.PostCustomException;
+import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +31,15 @@ import java.util.*;
 public class PostService {
 
     public final PostRepository postRepository;
-
+    public final MessageByLocaleImpl messageByLocale;
     public final MapStructMapper mapStructMapper;
 
-    public PostService(PostRepository postRepository, MapStructMapper mapStructMapper){
+    public PostService(PostRepository postRepository,
+                       MapStructMapper mapStructMapper,
+                       MessageByLocaleImpl messageByLocale){
         this.postRepository= postRepository;
         this.mapStructMapper =mapStructMapper;
+        this.messageByLocale = messageByLocale;
     }
 
     LocalDate date = LocalDate.now();
@@ -129,34 +135,34 @@ public class PostService {
         return postRepository.findById(postId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Post editPost(long postId,Post post, Optional<User> authenticatedUser,List<ImageUpload> postsImageUrls) throws PostCustomException {
         Optional<Post> findPost = postRepository.findById(postId);
-        if(!findPost.isPresent()){
-            Post ediatblePost = findPost.get();
-            ediatblePost.getImageUrls().forEach(imageUpload -> {
-                String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
-                String publicId = imageTag.substring(0 , imageTag.lastIndexOf("."));
-                try {
-                    deleteImage(publicId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-            post.setId(postId);
-            post.setUser(authenticatedUser.get());
-            post.setAddress(authenticatedUser.get().getAddress());
-            post.setFirstName(authenticatedUser.get().getFirstName());
-            post.setLastName(authenticatedUser.get().getLastName());
-            post.setPhoneNumber(authenticatedUser.get().getPhoneNumber());
-            post.setLastModifiedBy(authenticatedUser.get().getUsername());
-            post.setLastModifiedDate(LocalDateTime.now());
-            post.setImageUrls(uploadImagesToCloudinary);
-            return postRepository.save(post);
-        }
-        else {
-            throw new PostCustomException("sbehet gje");
-        }
+            if (findPost.isPresent()) {
+                Post ediatblePost = findPost.get();
+                ediatblePost.getImageUrls().forEach(imageUpload -> {
+                    String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
+                    String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
+                    try {
+                        deleteImage(publicId);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
+                ediatblePost.setPrice(post.getPrice());
+                ediatblePost.setDescription(post.getDescription());
+                ediatblePost.setCurrency(post.getCurrency());
+                ediatblePost.setCategory(post.getCategory());
+                ediatblePost.setSubcategory(post.getSubcategory());
+                ediatblePost.setTitle(post.getTitle());
+                ediatblePost.setLastModifiedBy(authenticatedUser.get().getUsername());
+                ediatblePost.setLastModifiedDate(LocalDateTime.now());
+                ediatblePost.setImageUrls(uploadImagesToCloudinary);
+                return postRepository.save(ediatblePost);
+            }else {
+                throw new PostCustomException(messageByLocale.getMessage("error.409.postNotPostedServerError"));
+            }
     }
 
     public void deleteById(long postId) {

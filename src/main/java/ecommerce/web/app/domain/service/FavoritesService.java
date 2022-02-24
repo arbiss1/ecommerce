@@ -7,6 +7,7 @@ import ecommerce.web.app.domain.repository.FavoritesRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,30 +19,34 @@ public class FavoritesService {
         this.favoritesRepository = favoritesRepository;
     }
 
-    public Favorites saveWishlist(Post post, User user){
+    public Favorites addToFavorites(Post post, User user){
         Favorites favorites = new Favorites();
         favorites.setPost(post);
+        favorites.setCreatedBy(user.getUsername());
+        favorites.setCreatedDate(LocalDateTime.now());
+        favorites.setLastModifiedBy(user.getUsername());
+        favorites.setLastModifiedDate(LocalDateTime.now());
         favorites.setUser(user);
         return favoritesRepository.save(favorites);
     }
 
     public Favorites findWishlistByUserAndPost(User user , Post post){
-        return favoritesRepository.findWishlistByUserAndPost(user,post);
+        return favoritesRepository.findFavoritesByUserAndPost(user,post);
     }
 
     @Transactional
-    public void deleteWishlist(Favorites favorites) {
+    public void deleteFavorites(Favorites favorites) {
 //        return wishlistRepository.deleteWishlistByWishlistId(findWishlistByPostAndUser.getWishlistId());
-        System.out.println(favorites.getWishlistId());
-        favoritesRepository.removeFromWishlist(favorites.getWishlistId());
+        System.out.println(favorites.getId());
+        favoritesRepository.removeFromFavorites(favorites.getId());
     }
 
-    public List<Favorites> findWishlistByUser(User authenticatedUser){
-        return favoritesRepository.findWishlistByUser(authenticatedUser);
+    public List<Favorites> findFavoritesByUser(User authenticatedUser){
+        return favoritesRepository.findFavoritesByUser(authenticatedUser);
     }
 
     public List<Favorites> searchWishlist(String keyword){
-        return favoritesRepository.searchWishlistByPostLike(keyword);
+        return favoritesRepository.searchFavoritesByPostLike(keyword);
     }
 
     public List<Favorites> findAll() {

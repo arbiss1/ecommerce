@@ -7,6 +7,7 @@ import ecommerce.web.app.domain.model.dto.UserLoginRequest;
 import ecommerce.web.app.domain.model.dto.UserRegisterRequest;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.exception.UserNotFoundException;
+import ecommerce.web.app.exception.UsernameAlreadyExists;
 import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import ecommerce.web.app.domain.model.mapper.MapStructMapper;
 import org.springframework.http.HttpStatus;
@@ -65,13 +66,12 @@ public class JwtAuthenticationController {
 
 	@PostMapping("/register")
 	public ResponseEntity<Void> registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest,
-											 BindingResult result) throws UserNotFoundException {
+											 BindingResult result) throws UsernameAlreadyExists {
 		Optional<User> findIfExists = userService.findByUsername(userRegisterRequest.getUsername());
 		if (result.hasErrors()) {
 			return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
 		} else if (findIfExists.isPresent()) {
-			throw new UserNotFoundException(
-					messageByLocale.getMessage("error.409.userExists"));
+			throw new UsernameAlreadyExists("error.409.userExists");
 		} else {
 			userService.saveUser(mapStructMapper.userPostDtoToUser(userRegisterRequest));
 			return new ResponseEntity(userRegisterRequest, HttpStatus.OK);

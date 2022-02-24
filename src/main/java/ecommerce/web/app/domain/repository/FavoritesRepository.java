@@ -17,15 +17,15 @@ public interface FavoritesRepository extends JpaRepository<Favorites,Long> {
 
 //    Wishlist deleteWishlistByWishlistId(long wishlistId);
 
-    Favorites findWishlistByUserAndPost(User authenticatedUser, Post findPost);
+    Favorites findFavoritesByUserAndPost(User authenticatedUser, Post findPost);
 
-    List<Favorites> findWishlistByUser(User authenticatedUser);
+    List<Favorites> findFavoritesByUser(User authenticatedUser);
 
-    List<Favorites> searchWishlistByPostLike(String keyword);
+    List<Favorites> searchFavoritesByPostLike(String keyword);
 
     @Modifying
     @Transactional
     @Query(nativeQuery = true , value = "DELETE FROM ecommerce.wishlist WHERE wishlist_id = :wishlistId ;")
-    void removeFromWishlist(@Param(value = "wishlistId") long wishlistId);
+    void removeFromFavorites(@Param(value = "wishlistId") long wishlistId);
 
 }

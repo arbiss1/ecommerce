@@ -3,6 +3,7 @@ package ecommerce.web.app.domain.model;
 import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -10,7 +11,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "post")
@@ -53,4 +53,5 @@ public class Post extends BaseEntity {
     @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private PostStatus status;
+
 }
