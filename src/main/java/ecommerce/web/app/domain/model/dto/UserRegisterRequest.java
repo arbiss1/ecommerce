@@ -17,7 +17,7 @@ public class UserRegisterRequest {
     private String username;
 
     @JsonProperty("password")
-    @ValidPassword
+//    @ValidPassword
     private String password;
 
     @JsonProperty("firstName")

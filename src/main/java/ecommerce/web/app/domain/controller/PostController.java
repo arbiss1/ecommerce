@@ -4,21 +4,18 @@ package ecommerce.web.app.domain.controller;
 import ecommerce.web.app.domain.model.ImageUpload;
 import ecommerce.web.app.domain.model.Post;
 import ecommerce.web.app.domain.model.dto.PostRequest;
-import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
 import ecommerce.web.app.domain.service.PostService;
-import ecommerce.web.app.exception.PostCustomException;
+import ecommerce.web.app.exception.customExceptions.PostCustomException;
 import ecommerce.web.app.domain.model.mapper.MapStructMapper;
 import ecommerce.web.app.domain.service.UserService;
-import javafx.geometry.Pos;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -29,15 +26,17 @@ public class PostController {
    public final UserService userService;
    public final PostService postService;
    public final MapStructMapper mapStructMapper;
-   public final MessageByLocaleImpl messageByLocale;
+   public final MessageSource messageByLocale;
 
     public PostController(UserService userService,PostService postService,
-                          MapStructMapper mapStructMapper,MessageByLocaleImpl messageByLocale){
+                          MapStructMapper mapStructMapper,MessageSource messageByLocale){
         this.userService = userService;
         this.postService = postService;
         this.mapStructMapper = mapStructMapper;
         this.messageByLocale = messageByLocale;
     }
+
+    private final Locale locale = Locale.ENGLISH;
 
     @PostMapping("/post")
     public ResponseEntity<Post> post(@Valid @RequestBody PostRequest post, BindingResult result)
@@ -59,7 +58,7 @@ public class PostController {
         Optional<Post> findPostById = postService.findByPostId(postId);
         if(!findPostById.isPresent()){
             throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }
         else
         {
@@ -75,7 +74,7 @@ public class PostController {
         List<Post> listOfPosts = postService.findAll();
         if(listOfPosts.isEmpty()){
             throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }else {
             return new ResponseEntity(listOfPosts,HttpStatus.ACCEPTED);
         }
@@ -90,7 +89,7 @@ public class PostController {
             return new ResponseEntity(postService.findAll(),HttpStatus.ACCEPTED);
         }else if( seachForPosts.isEmpty()){
             throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }
         else {
             return new ResponseEntity(seachForPosts,HttpStatus.ACCEPTED);
@@ -103,7 +102,7 @@ public class PostController {
                 userService.getAuthenticatedUser().get().getId());
         if(listByAuthenticatedUser.isEmpty()){
             throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }else {
             return new ResponseEntity(listByAuthenticatedUser,HttpStatus.ACCEPTED);
         }
@@ -118,7 +117,7 @@ public class PostController {
             return new ResponseEntity(result.getAllErrors(),HttpStatus.CONFLICT);
         }
         else if(!findPost.isPresent()){
-            throw new PostCustomException(messageByLocale.getMessage("error.404.postNotFound"));
+            throw new PostCustomException(messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }
         else {
             List<ImageUpload> postsImageUrls = post.getImageUrls();
@@ -134,7 +133,7 @@ public class PostController {
         Optional<Post> findPost = postService.findByPostId(postId);
         if(!findPost.isPresent()){
             throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }else {
             postService.deleteById(postId);
             return new ResponseEntity("Deleted successfully",HttpStatus.ACCEPTED);

@@ -6,14 +6,15 @@ import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.domain.service.FavoritesService;
 import ecommerce.web.app.domain.model.Favorites;
-import ecommerce.web.app.exception.FavoritesCustomException;
-import ecommerce.web.app.exception.PostCustomException;
-import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
+import ecommerce.web.app.exception.customExceptions.FavoritesCustomException;
+import ecommerce.web.app.exception.customExceptions.PostCustomException;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @RestController
@@ -22,40 +23,42 @@ public class FavoritesController {
     public final PostService postService;
     public final UserService userService;
     public final FavoritesService favoritesService;
-    public final MessageByLocaleImpl messageByLocale;
+    public final MessageSource messageByLocale;
 
     public FavoritesController(PostService postService,
                                UserService userService,
                                FavoritesService favoritesService,
-                               MessageByLocaleImpl messageByLocale){
+                               MessageSource messageByLocale){
         this.postService = postService;
         this.userService = userService;
         this.favoritesService = favoritesService;
         this.messageByLocale = messageByLocale;
     }
 
-
+    private final Locale locale = Locale.ENGLISH;
 
     @GetMapping("/show-favorites")
-    public ResponseEntity showFavorites(){
+    public ResponseEntity showFavorites() throws FavoritesCustomException {
         User authenticatedUser = userService.getAuthenticatedUser().get();
         List<Favorites> favoritesByUserAuthenticated =
                 favoritesService.findFavoritesByUser(authenticatedUser);
         if(favoritesByUserAuthenticated.isEmpty()){
-            return new ResponseEntity("Wishlist is empty",HttpStatus.NO_CONTENT);
+            throw new FavoritesCustomException(
+                    messageByLocale.getMessage("error.404.noFavoritesFound",null,locale));
         }else {
             return new ResponseEntity(favoritesByUserAuthenticated,HttpStatus.ACCEPTED);
         }
     }
 
     @GetMapping("/search-favorites")
-    public ResponseEntity searchWishlist(@RequestParam String keyword){
+    public ResponseEntity searchWishlist(@RequestParam String keyword) throws FavoritesCustomException {
         List<Favorites> searchForFavorites = favoritesService.searchWishlist(keyword);
         if(keyword.equals("") || keyword.equals(" ") ||
                 keyword.equals(null)){
             return new ResponseEntity(favoritesService.findAll(),HttpStatus.ACCEPTED);
         }else if(searchForFavorites.isEmpty()){
-            return new ResponseEntity("No posts found",HttpStatus.NO_CONTENT);
+            throw new FavoritesCustomException(
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }
         else {
             return new ResponseEntity(searchForFavorites,HttpStatus.ACCEPTED);
@@ -69,7 +72,7 @@ public class FavoritesController {
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
         if(!findPost.isPresent() || getAuthenticatedUser.equals("")){
             throw new FavoritesCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }else {
             Post getFoundPost = findPost.get();
             return new ResponseEntity(favoritesService.addToFavorites(
@@ -84,14 +87,14 @@ public class FavoritesController {
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
         if(!findPost.isPresent() || getAuthenticatedUser.equals("")){
             throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound"));
+                    messageByLocale.getMessage("error.404.postNotFound",null,locale));
         }else {
             Post getFoundPost = findPost.get();
             Favorites findFavoritesByPostAndUser = favoritesService.findWishlistByUserAndPost(
                     getAuthenticatedUser,getFoundPost);
             if(findFavoritesByPostAndUser.equals("")){
                 throw new FavoritesCustomException(
-                        messageByLocale.getMessage("error.404.noFavoritesFound"));
+                        messageByLocale.getMessage("error.404.noFavoritesFound",null,locale));
             }else {
                 favoritesService.deleteFavorites(findFavoritesByPostAndUser);
                 return new ResponseEntity("Removed successfully from wishlist",

@@ -10,9 +10,9 @@ import ecommerce.web.app.domain.model.Post;
 import ecommerce.web.app.domain.repository.PostRepository;
 import ecommerce.web.app.domain.model.User;
 import ecommerce.web.app.domain.model.mapper.MapStructMapper;
-import ecommerce.web.app.exception.PostCustomException;
-import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
+import ecommerce.web.app.exception.customExceptions.PostCustomException;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -31,20 +31,18 @@ import java.util.*;
 public class PostService {
 
     public final PostRepository postRepository;
-    public final MessageByLocaleImpl messageByLocale;
+    public final MessageSource messageByLocale;
     public final MapStructMapper mapStructMapper;
 
     public PostService(PostRepository postRepository,
                        MapStructMapper mapStructMapper,
-                       MessageByLocaleImpl messageByLocale){
+                       MessageSource messageByLocale){
         this.postRepository= postRepository;
         this.mapStructMapper =mapStructMapper;
         this.messageByLocale = messageByLocale;
     }
 
-    LocalDate date = LocalDate.now();
-    LocalTime time = LocalTime.now();
-
+    private final Locale locale = Locale.ENGLISH;
 
     Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
             "cloud_name", "dxrixqpjg",
@@ -161,7 +159,7 @@ public class PostService {
                 ediatblePost.setImageUrls(uploadImagesToCloudinary);
                 return postRepository.save(ediatblePost);
             }else {
-                throw new PostCustomException(messageByLocale.getMessage("error.409.postNotPostedServerError"));
+                throw new PostCustomException(messageByLocale.getMessage("error.409.postNotPostedServerError",null,locale));
             }
     }
 

@@ -6,10 +6,11 @@ import ecommerce.web.app.domain.model.User;
 import ecommerce.web.app.domain.model.dto.UserLoginRequest;
 import ecommerce.web.app.domain.model.dto.UserRegisterRequest;
 import ecommerce.web.app.domain.service.UserService;
-import ecommerce.web.app.exception.UserNotFoundException;
-import ecommerce.web.app.exception.UsernameAlreadyExists;
-import ecommerce.web.app.i18nConfig.MessageByLocaleImpl;
+import ecommerce.web.app.exception.customExceptions.EmailAlreadyExists;
+import ecommerce.web.app.exception.customExceptions.PhoneNumberAlreadyExists;
+import ecommerce.web.app.exception.customExceptions.UsernameAlreadyExists;
 import ecommerce.web.app.domain.model.mapper.MapStructMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,14 +35,14 @@ public class JwtAuthenticationController {
 	private final JwtTokenUtil jwtTokenUtil;
 	private final UserDetailsService jwtInMemoryUserDetailsService;
 	private final UserService userService;
-	private final MessageByLocaleImpl messageByLocale;
+	private final MessageSource messageByLocale;
 	private final MapStructMapper mapStructMapper;
 
 	public JwtAuthenticationController(AuthenticationManager authenticationManager,
 									   JwtTokenUtil jwtTokenUtil,
 									   UserDetailsService jwtInMemoryUserDetailsService,
 									   UserService userService,
-									   MessageByLocaleImpl messageByLocale,
+									   MessageSource messageByLocale,
 									   MapStructMapper mapStructMapper){
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenUtil = jwtTokenUtil;
@@ -49,6 +51,8 @@ public class JwtAuthenticationController {
 		this.messageByLocale = messageByLocale;
 		this.mapStructMapper = mapStructMapper;
 	}
+
+	private final Locale locale = Locale.ENGLISH;
 
 	@PostMapping(value = "/authenticate")
 	public ResponseEntity createAuthenticationToken(@RequestBody UserLoginRequest authenticationRequest)
@@ -66,17 +70,28 @@ public class JwtAuthenticationController {
 
 	@PostMapping("/register")
 	public ResponseEntity<Void> registerUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest,
-											 BindingResult result) throws UsernameAlreadyExists {
-		Optional<User> findIfExists = userService.findByUsername(userRegisterRequest.getUsername());
+											 BindingResult result) throws UsernameAlreadyExists,
+                                             PhoneNumberAlreadyExists, EmailAlreadyExists {
+		Optional<User> findIfExistsUsername = userService.findByUsername(userRegisterRequest.getUsername());
+		Optional<User> findIfExistsPhoneNumber = userService.findByPhoneNumber(userRegisterRequest.getPhoneNumber());
+		Optional<User> findIfExistsEmail = userService.findByEmail(userRegisterRequest.getEmail());
 		if (result.hasErrors()) {
 			return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
-		} else if (findIfExists.isPresent()) {
-			throw new UsernameAlreadyExists("error.409.userExists");
-		} else {
-			userService.saveUser(mapStructMapper.userPostDtoToUser(userRegisterRequest));
-			return new ResponseEntity(userRegisterRequest, HttpStatus.OK);
 		}
-	}
+        if(findIfExistsUsername.isPresent()){
+            throw new UsernameAlreadyExists(messageByLocale.getMessage("error.409.userExists",null,locale));
+        }
+        if(findIfExistsEmail.isPresent()){
+            throw new EmailAlreadyExists(messageByLocale.getMessage("error.409.emailExists",null,locale));
+        }
+        if(findIfExistsPhoneNumber.isPresent()){
+            throw new PhoneNumberAlreadyExists(messageByLocale.getMessage("error.409.phoneNumberExists",null,locale));
+        }
+        else {
+            userService.saveUser(mapStructMapper.userPostDtoToUser(userRegisterRequest));
+        }
+        return new ResponseEntity(userRegisterRequest, HttpStatus.OK);
+    }
 
 	private void authenticate(String username, String password) throws Exception {
 		Objects.requireNonNull(username);

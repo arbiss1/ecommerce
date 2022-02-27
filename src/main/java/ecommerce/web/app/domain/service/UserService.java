@@ -57,6 +57,14 @@ public class UserService {
         return listAll().stream().anyMatch(username -> username.getUsername().equals(user.getUsername()));
     }
 
+    public Optional<User> findByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 //    public boolean isUserValid(User user ){
 //        return listAll().stream().anyMatch(p -> p.getPassword().equals(user.getPassword())
 //                && p.getUsername().equals(user.getUsername()));
