@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class ExceptionHandler {
-
+//
     @org.springframework.web.bind.annotation.ExceptionHandler(UsernameAlreadyExists.class)
     public ResponseEntity<ApiError> handleUserAlreadyExists(UsernameAlreadyExists ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
