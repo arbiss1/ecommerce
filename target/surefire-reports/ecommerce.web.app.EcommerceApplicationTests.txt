@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ecommerce.web.app.EcommerceApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.404 s - in ecommerce.web.app.EcommerceApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.577 s - in ecommerce.web.app.EcommerceApplicationTests

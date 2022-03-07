@@ -4,6 +4,7 @@ ecommerce\web\app\domain\repository\UserRepository.class
 ecommerce\web\app\domain\enums\Currency.class
 ecommerce\web\app\exception\customExceptions\PostCustomException.class
 ecommerce\web\app\domain\model\ChargeRequest$Currency.class
+ecommerce\web\app\domain\repository\CategoryRepository.class
 ecommerce\web\app\domain\model\BaseEntity.class
 ecommerce\web\app\EcommerceApplication.class
 ecommerce\web\app\domain\service\StripeService.class
@@ -35,6 +36,7 @@ ecommerce\web\app\domain\model\Favorites.class
 ecommerce\web\app\domain\model\mapper\MapStructMapper.class
 ecommerce\web\app\domain\controller\PostController.class
 ecommerce\web\app\domain\controller\ChargeController.class
+ecommerce\web\app\domain\model\Subcategory.class
 ecommerce\web\app\authentication\model\JwtResponse.class
 ecommerce\web\app\domain\model\ChargeRequest.class
 ecommerce\web\app\domain\controller\CheckoutController.class
@@ -45,10 +47,12 @@ ecommerce\web\app\annotations\PasswordConstraintValidator.class
 ecommerce\web\app\domain\repository\FavoritesRepository.class
 ecommerce\web\app\authentication\security\WebSecurityConfig.class
 ecommerce\web\app\configs\AsyncConfiguration.class
+ecommerce\web\app\domain\repository\SubcategoryRepository.class
 ecommerce\web\app\domain\repository\PostRepository.class
 ecommerce\web\app\domain\model\dto\PostRequest.class
 ecommerce\web\app\domain\model\mapper\MapStructMapperImpl.class
 ecommerce\web\app\domain\service\PostService.class
 ecommerce\web\app\domain\model\dto\UserRegisterRequest.class
+ecommerce\web\app\domain\model\Category.class
 ecommerce\web\app\domain\model\dto\UserLoginRequest.class
 ecommerce\web\app\domain\model\Post.class
