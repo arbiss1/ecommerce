@@ -5,11 +5,11 @@ import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.PostStatus;
-import ecommerce.web.app.domain.model.ImageUpload;
-import ecommerce.web.app.domain.model.Post;
+import ecommerce.web.app.domain.model.*;
+import ecommerce.web.app.domain.repository.CategoryRepository;
 import ecommerce.web.app.domain.repository.PostRepository;
-import ecommerce.web.app.domain.model.User;
 import ecommerce.web.app.domain.model.mapper.MapStructMapper;
+import ecommerce.web.app.domain.repository.SubcategoryRepository;
 import ecommerce.web.app.exception.customExceptions.PostCustomException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
@@ -33,13 +33,20 @@ public class PostService {
     public final PostRepository postRepository;
     public final MessageSource messageByLocale;
     public final MapStructMapper mapStructMapper;
+    public final CategoryRepository categoryRepository;
+    public final SubcategoryRepository subcategoryRepository;
+
 
     public PostService(PostRepository postRepository,
                        MapStructMapper mapStructMapper,
-                       MessageSource messageByLocale){
-        this.postRepository= postRepository;
-        this.mapStructMapper =mapStructMapper;
+                       MessageSource messageByLocale,
+                       CategoryRepository categoryRepository,
+                       SubcategoryRepository subcategoryRepository){
+        this.postRepository = postRepository;
+        this.mapStructMapper = mapStructMapper;
         this.messageByLocale = messageByLocale;
+        this.categoryRepository = categoryRepository;
+        this.subcategoryRepository = subcategoryRepository;
     }
 
     private final Locale locale = Locale.ENGLISH;
@@ -106,6 +113,8 @@ public class PostService {
         post.setPostAdvertIndex(AdvertIndex.FREE);
         return postRepository.save(post);
     }
+
+
 
     public Post changeStatusToActive(Post post, Optional<User> userAuth){
         Optional<Post> findIfPostExist = postRepository.findById(post.getId());

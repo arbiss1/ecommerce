@@ -3,12 +3,11 @@ package ecommerce.web.app.domain.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
+import ecommerce.web.app.domain.model.Category;
 import ecommerce.web.app.domain.model.ImageUpload;
+import ecommerce.web.app.domain.model.Subcategory;
 import lombok.Data;
 
-import javax.persistence.JoinColumn;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -29,9 +28,9 @@ public class PostRequest {
     @JsonProperty("advertIndex")
     private AdvertIndex advertIndex;
     @JsonProperty("category")
-    private String category;
+    private Category category;
     @JsonProperty("subCategory")
-    private String subCategory;
+    private List<Subcategory> subCategory;
     @JsonProperty("imageUrls")
     private List<ImageUpload> imageUrls;
 }

@@ -3,7 +3,6 @@ package ecommerce.web.app.domain.model;
 import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -46,10 +45,13 @@ public class Post extends BaseEntity {
     @Size(max = 5, min = 1)
     @NotNull(message = "Images must not be empty")
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "post_image_uploads")
+    @JoinTable(name = "post_image_uploads_mapped_list")
     private List<ImageUpload> imageUrls;
-    private String category;
-    private String subcategory;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Category category;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "subcategories_mapped_list")
+    private List<Subcategory> subcategory;
     @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private PostStatus status;
