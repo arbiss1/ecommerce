@@ -41,7 +41,7 @@ public class PostService {
                        MapStructMapper mapStructMapper,
                        MessageSource messageByLocale,
                        CategoryRepository categoryRepository,
-                       SubcategoryRepository subcategoryRepository){
+                       SubcategoryRepository subcategoryRepository) {
         this.postRepository = postRepository;
         this.mapStructMapper = mapStructMapper;
         this.messageByLocale = messageByLocale;
@@ -57,7 +57,7 @@ public class PostService {
             "api_secret", "dqIiglHTAoRuYD2j887wmCk56vU"));
 
     @Async
-    public List<ImageUpload> postImageUpload(@NotNull List<ImageUpload> absoluteFilePath){
+    public List<ImageUpload> postImageUpload(@NotNull List<ImageUpload> absoluteFilePath) {
         List<Object> transferUrlsToStorage = new ArrayList<>();
         absoluteFilePath.forEach(imageUpload -> {
             File file = new File(imageUpload.getImageUrl());
@@ -66,7 +66,7 @@ public class PostService {
                 try {
                     uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap
                             (
-                                    "transformation",new Transformation().width(2840).height(1650).quality(40).crop("pad").background("auto")));
+                                    "transformation", new Transformation().width(1600).height(1000).quality(40).crop("pad").background("auto")));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -77,24 +77,24 @@ public class PostService {
         transferUrlsToStorage.forEach(o -> {
             absoluteFilePath.get(count[0]++).setImageUrl(o.toString());
         });
-      if(absoluteFilePath.isEmpty()){
-          return null;
-      }else {
-          return absoluteFilePath;
-      }
+        if (absoluteFilePath.isEmpty()) {
+            return null;
+        } else {
+            return absoluteFilePath;
+        }
     }
 
-    public Page<Post> findAll(Pageable pageable){
+    public Page<Post> findAll(Pageable pageable) {
         return postRepository.findAll(pageable);
     }
 
     public void deleteImage(String publicId) throws IOException {
 
-                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
 
-            }
+    }
 
-    public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls){
+    public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls) {
         List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
         User getAuthenticatedUser = userAuth.get();
         post.setUser(getAuthenticatedUser);
@@ -115,22 +115,21 @@ public class PostService {
     }
 
 
-
-    public Post changeStatusToActive(Post post, Optional<User> userAuth){
+    public Post changeStatusToActive(Post post, Optional<User> userAuth) {
         Optional<Post> findIfPostExist = postRepository.findById(post.getId());
-        if(findIfPostExist.isPresent()){
+        if (findIfPostExist.isPresent()) {
             post.setStatus(PostStatus.ACTIVE);
-        }else {
+        } else {
             post.setStatus(PostStatus.PENDING);
         }
         return postRepository.save(post);
     }
 
     public List<Post> findAll() {
-      return postRepository.findAll();
+        return postRepository.findAll();
     }
 
-    public List<Post> searchPosts(String keyword){
+    public List<Post> searchPosts(String keyword) {
         return postRepository.searchPosts(keyword);
     }
 
@@ -143,36 +142,49 @@ public class PostService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Post editPost(long postId,Post post, Optional<User> authenticatedUser,List<ImageUpload> postsImageUrls) throws PostCustomException {
+    public Post editPost(long postId, Post post, Optional<User> authenticatedUser, List<ImageUpload> postsImageUrls) throws PostCustomException {
         Optional<Post> findPost = postRepository.findById(postId);
-            if (findPost.isPresent()) {
-                Post ediatblePost = findPost.get();
-                ediatblePost.getImageUrls().forEach(imageUpload -> {
-                    String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
-                    String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
-                    try {
-                        deleteImage(publicId);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-                List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-                ediatblePost.setPrice(post.getPrice());
-                ediatblePost.setDescription(post.getDescription());
-                ediatblePost.setCurrency(post.getCurrency());
-                ediatblePost.setCategory(post.getCategory());
-                ediatblePost.setSubcategory(post.getSubcategory());
-                ediatblePost.setTitle(post.getTitle());
-                ediatblePost.setLastModifiedBy(authenticatedUser.get().getUsername());
-                ediatblePost.setLastModifiedDate(LocalDateTime.now());
-                ediatblePost.setImageUrls(uploadImagesToCloudinary);
-                return postRepository.save(ediatblePost);
-            }else {
-                throw new PostCustomException(messageByLocale.getMessage("error.409.postNotPostedServerError",null,locale));
-            }
+        if (findPost.isPresent()) {
+            Post ediatblePost = findPost.get();
+            ediatblePost.getImageUrls().forEach(imageUpload -> {
+                String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
+                String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
+                try {
+                    deleteImage(publicId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
+            ediatblePost.setPrice(post.getPrice());
+            ediatblePost.setDescription(post.getDescription());
+            ediatblePost.setCurrency(post.getCurrency());
+            ediatblePost.setCategory(post.getCategory());
+            ediatblePost.setSubcategory(post.getSubcategory());
+            ediatblePost.setTitle(post.getTitle());
+            ediatblePost.setLastModifiedBy(authenticatedUser.get().getUsername());
+            ediatblePost.setLastModifiedDate(LocalDateTime.now());
+            ediatblePost.setImageUrls(uploadImagesToCloudinary);
+            return postRepository.save(ediatblePost);
+        } else {
+            throw new PostCustomException(messageByLocale.getMessage("error.409.postNotPostedServerError", null, locale));
+        }
     }
 
     public void deleteById(long postId) {
+        Optional<Post> findPost = postRepository.findById(postId);
+        if (findPost.isPresent()) {
+            Post getPost = findPost.get();
+            getPost.getImageUrls().forEach(imageUpload -> {
+                String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
+                String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
+                try {
+                    deleteImage(publicId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         postRepository.deleteById(postId);
     }
 }
