@@ -1,7 +1,7 @@
 package ecommerce.web.app.exception.exceptionHandler;
 
 import ecommerce.web.app.exception.ApiError;
-import ecommerce.web.app.exception.customExceptions.UsernameAlreadyExists;
+import ecommerce.web.app.exception.customExceptions.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,36 @@ public class ExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler(UsernameAlreadyExists.class)
     public ResponseEntity<ApiError> handleUserAlreadyExists(UsernameAlreadyExists ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(UserNotFoundException ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(PostCustomException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(PostCustomException ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(EmailAlreadyExists.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(EmailAlreadyExists ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(PhoneNumberAlreadyExists.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(PhoneNumberAlreadyExists ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(FavoritesCustomException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(FavoritesCustomException ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(CardCustomException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(CardCustomException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 

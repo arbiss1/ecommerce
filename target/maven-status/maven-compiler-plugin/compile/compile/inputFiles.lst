@@ -24,15 +24,18 @@ C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\au
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\exception\ApiError.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\authentication\security\WebSecurityConfig.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\model\ChargeRequest.java
+C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\model\Subcategory.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\exception\customExceptions\UserNotFoundException.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\enums\Currency.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\repository\FavoritesRepository.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\repository\ImageUploadRepository.java
+C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\model\Category.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\exception\customExceptions\EmailAlreadyExists.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\controller\ChargeController.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\service\UserService.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\exception\customExceptions\PostCustomException.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\model\Card.java
+C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\repository\CategoryRepository.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\authentication\service\JwtRequestFilter.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\repository\PostRepository.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\service\StripeService.java
@@ -44,6 +47,7 @@ C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\do
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\authentication\model\JwtResponse.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\controller\PostController.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\model\dto\UserRegisterRequest.java
+C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\repository\SubcategoryRepository.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\enums\AdvertIndex.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\domain\model\User.java
 C:\Users\amalasi\Desktop\Arbis\ECOMMERCE-back\src\main\java\ecommerce\web\app\exception\customExceptions\PhoneNumberAlreadyExists.java
