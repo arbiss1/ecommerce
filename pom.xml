@@ -12,7 +12,7 @@
   <groupId>ecommerce.web.app</groupId>  
   <artifactId>Ecommerce</artifactId>  
   <version>0.0.1-SNAPSHOT</version>  
-  <packaging>war</packaging>  
+  <packaging>jar</packaging>
   <name>Ecommerce</name>  
   <description>Ecommerce application</description>  
   <properties> 
@@ -224,7 +224,7 @@
               <resource>
                 <directory>${project.basedir}/target</directory>
                 <includes>
-                  <include>*.war</include>
+                  <include>*.jar</include>
                 </includes>
               </resource>
             </resources>
