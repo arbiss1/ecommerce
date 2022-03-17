@@ -47,7 +47,7 @@ public class PostController {
         else{
             List<ImageUpload> postsImageUrls = post.getImageUrls();
             return new ResponseEntity(postService.savePost(mapStructMapper.postDtoToPost(post)
-                    ,userService.getAuthenticatedUser(),postsImageUrls)
+                    ,userService.getAuthenticatedUser(), postsImageUrls)
                     ,HttpStatus.ACCEPTED);
         }
     }
