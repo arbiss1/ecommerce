@@ -49,7 +49,7 @@ public class Post extends BaseEntity {
     private List<ImageUpload> imageUrls;
     @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "subcategories_mapped_list")
     private List<Subcategory> subcategory;
     @Column(name = "post_status")

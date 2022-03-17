@@ -8,6 +8,7 @@ import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.exception.customExceptions.PostCustomException;
 import ecommerce.web.app.configs.mapper.MapStructMapper;
 import ecommerce.web.app.domain.service.UserService;
+import ecommerce.web.app.exception.customExceptions.UserNotFoundException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class PostController {
 
     @PostMapping("/post/add")
     public ResponseEntity<Post> post(@Valid @RequestBody PostRequest post, BindingResult result)
-            throws InterruptedException {
+            throws InterruptedException, UserNotFoundException {
         if(result.hasErrors()){
             return new ResponseEntity(result.getAllErrors(), HttpStatus.CONFLICT);
         }
@@ -52,8 +53,8 @@ public class PostController {
         }
     }
 
-    @PostMapping("/post/status/change")
-    public ResponseEntity<Post> changePostStatusToActive(@RequestParam(value = "postId") long postId)
+    @PostMapping("/post/status/change/{postId}")
+    public ResponseEntity<Post> changePostStatusToActive(@PathVariable(value = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPostById = postService.findByPostId(postId);
         if(!findPostById.isPresent()){

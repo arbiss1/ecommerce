@@ -9,10 +9,12 @@ import ecommerce.web.app.domain.repository.CategoryRepository;
 import ecommerce.web.app.domain.repository.PostRepository;
 import ecommerce.web.app.configs.mapper.MapStructMapper;
 import ecommerce.web.app.domain.repository.SubcategoryRepository;
+import ecommerce.web.app.entity.Category;
 import ecommerce.web.app.entity.ImageUpload;
 import ecommerce.web.app.entity.Post;
 import ecommerce.web.app.entity.User;
 import ecommerce.web.app.exception.customExceptions.PostCustomException;
+import ecommerce.web.app.exception.customExceptions.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -93,9 +95,18 @@ public class PostService {
 
     }
 
-    public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls) {
+    public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls)
+            throws UserNotFoundException {
         List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-        User getAuthenticatedUser = userAuth.get();
+        User getAuthenticatedUser = null;
+        if(userAuth.isPresent()){
+            getAuthenticatedUser = userAuth.get();
+        }
+        else {
+            throw new UserNotFoundException(messageByLocale.getMessage(
+                    "error.404.userNotFound", null, locale)
+            );
+        }
         post.setUser(getAuthenticatedUser);
         post.setAddress(getAuthenticatedUser.getAddress());
         post.setFirstName(getAuthenticatedUser.getFirstName());
@@ -110,6 +121,8 @@ public class PostService {
         post.setImageUrls(uploadImagesToCloudinary);
         post.setStatus(PostStatus.PENDING);
         post.setPostAdvertIndex(AdvertIndex.FREE);
+        Optional<Category> category = categoryRepository.findCategoryByName(post.getCategory().getName());
+        category.ifPresent(post::setCategory);
         return postRepository.save(post);
     }
 
