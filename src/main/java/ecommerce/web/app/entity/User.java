@@ -1,4 +1,4 @@
-package ecommerce.web.app.domain.model;
+package ecommerce.web.app.entity;
 
 
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Entity
 @Data

@@ -1,9 +1,9 @@
 package ecommerce.web.app.domain.controller;
 
 import ecommerce.web.app.domain.service.CardService;
-import ecommerce.web.app.domain.model.Card;
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.entity.Card;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.entity.User;
 import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.exception.customExceptions.CardCustomException;
@@ -36,7 +36,7 @@ public class CardController {
 
     private final Locale locale = Locale.ENGLISH;
 
-    @PostMapping("/add-to-card/{postId}")
+    @PostMapping("/card/add/{postId}")
     public ResponseEntity addToCard(@PathVariable(name = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);
@@ -57,7 +57,7 @@ public class CardController {
         }
     }
 
-    @DeleteMapping("/remove-from-card/{postId}")
+    @DeleteMapping("/card/remove/{postId}")
     public ResponseEntity removeFromCard(@PathVariable(name = "postId") long postId)
             throws PostCustomException, CardCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);
@@ -80,7 +80,7 @@ public class CardController {
         }
     }
 
-    @GetMapping("/show-card")
+    @GetMapping("/card/show")
     public ResponseEntity showCard() throws UserNotFoundException {
         User getAuthenticatedUser = userService.getAuthenticatedUser().get();
         if(getAuthenticatedUser == null || getAuthenticatedUser == null){

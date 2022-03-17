@@ -1,10 +1,7 @@
-package ecommerce.web.app.domain.model.dto;
+package ecommerce.web.app.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ecommerce.web.app.annotations.ValidPassword;
-import ecommerce.web.app.domain.model.BaseEntity;
 import lombok.Data;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 

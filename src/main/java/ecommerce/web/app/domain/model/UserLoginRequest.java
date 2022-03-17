@@ -1,4 +1,4 @@
-package ecommerce.web.app.domain.model.dto;
+package ecommerce.web.app.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

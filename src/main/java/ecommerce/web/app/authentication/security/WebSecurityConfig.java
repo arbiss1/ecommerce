@@ -5,7 +5,6 @@ import ecommerce.web.app.authentication.service.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,19 +21,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final UserDetailsService jwtUserDetailsService;
 	private final JwtRequestFilter jwtRequestFilter;
 
 	public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
 							 UserDetailsService userDetailsService,
 							 JwtRequestFilter jwtRequestFilter){
 		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-		this.jwtUserDetailsService = userDetailsService;
 		this.jwtRequestFilter = jwtRequestFilter;
-	}
-
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -69,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/doc/v2/js/**", "/css/**").permitAll()
 				.antMatchers("/authenticate").permitAll()
 				.antMatchers("/login").permitAll()
+				.antMatchers("/delete/user/{userId}").permitAll()
 				.antMatchers("/register").permitAll()
 				.antMatchers("/list-all-posts").permitAll()
 				.antMatchers("/search-post").permitAll()

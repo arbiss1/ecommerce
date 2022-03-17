@@ -1,8 +1,7 @@
 package ecommerce.web.app.domain.service;
 
-import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.entity.User;
 import ecommerce.web.app.domain.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

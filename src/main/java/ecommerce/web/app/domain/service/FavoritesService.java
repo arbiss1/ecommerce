@@ -1,8 +1,8 @@
 package ecommerce.web.app.domain.service;
 
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
-import ecommerce.web.app.domain.model.Favorites;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.entity.User;
+import ecommerce.web.app.entity.Favorites;
 import ecommerce.web.app.domain.repository.FavoritesRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

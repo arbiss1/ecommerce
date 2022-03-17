@@ -1,12 +1,12 @@
 package ecommerce.web.app.domain.controller;
 
 
-import ecommerce.web.app.domain.model.ImageUpload;
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.dto.PostRequest;
+import ecommerce.web.app.entity.ImageUpload;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.domain.model.PostRequest;
 import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.exception.customExceptions.PostCustomException;
-import ecommerce.web.app.domain.model.mapper.MapStructMapper;
+import ecommerce.web.app.configs.mapper.MapStructMapper;
 import ecommerce.web.app.domain.service.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class PostController {
 
     private final Locale locale = Locale.ENGLISH;
 
-    @PostMapping("/post")
+    @PostMapping("/post/add")
     public ResponseEntity<Post> post(@Valid @RequestBody PostRequest post, BindingResult result)
             throws InterruptedException {
         if(result.hasErrors()){
@@ -52,7 +52,7 @@ public class PostController {
         }
     }
 
-    @PostMapping("/post/status-change")
+    @PostMapping("/post/status/change")
     public ResponseEntity<Post> changePostStatusToActive(@RequestParam(value = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPostById = postService.findByPostId(postId);
@@ -68,7 +68,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/list-all-posts")
+    @GetMapping("/post/all")
     public ResponseEntity<Post> listAllPosts() throws PostCustomException {
 //        Pageable firstPageWithTwoElements = PageRequest.of(0,3);
         List<Post> listOfPosts = postService.findAll();
@@ -80,7 +80,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/search-post")
+    @GetMapping("/post/search")
     public ResponseEntity<Post> searchPosts(@RequestParam String keyword)
             throws PostCustomException {
         List<Post> seachForPosts = postService.searchPosts(keyword);
@@ -96,7 +96,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/list-posts-by-user-auth")
+    @GetMapping("/user/post/all")
     public ResponseEntity<Post> listPostsByAuthenticatedUser() throws PostCustomException {
         List<Post> listByAuthenticatedUser = postService.findByUserId(
                 userService.getAuthenticatedUser().get().getId());
@@ -108,7 +108,7 @@ public class PostController {
         }
     }
 
-    @PutMapping("/edit-post/{postId}")
+    @PutMapping("/post/edit{postId}")
     public ResponseEntity<Post> editPost(@PathVariable (name = "postId") long postId ,
                                          @RequestBody PostRequest post, BindingResult result)
                                          throws PostCustomException {
@@ -127,7 +127,7 @@ public class PostController {
         }
     }
 
-    @DeleteMapping("/delete-post/{postId}")
+    @DeleteMapping("/post/delete{postId}")
     public ResponseEntity<Post> deletePost(@PathVariable(name = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);

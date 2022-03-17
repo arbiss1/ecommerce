@@ -1,14 +1,12 @@
 package ecommerce.web.app.domain.service;
 
-import ecommerce.web.app.domain.model.Card;
+import ecommerce.web.app.entity.Card;
 import ecommerce.web.app.domain.repository.CardRepository;
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.entity.User;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service

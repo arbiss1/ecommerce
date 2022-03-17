@@ -1,8 +1,8 @@
 package ecommerce.web.app.domain.repository;
 
-import ecommerce.web.app.domain.model.Card;
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.entity.Card;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

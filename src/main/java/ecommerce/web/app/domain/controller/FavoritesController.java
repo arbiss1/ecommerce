@@ -1,11 +1,11 @@
 package ecommerce.web.app.domain.controller;
 
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.entity.User;
 import ecommerce.web.app.domain.service.PostService;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.domain.service.FavoritesService;
-import ecommerce.web.app.domain.model.Favorites;
+import ecommerce.web.app.entity.Favorites;
 import ecommerce.web.app.exception.customExceptions.FavoritesCustomException;
 import ecommerce.web.app.exception.customExceptions.PostCustomException;
 import org.springframework.context.MessageSource;
@@ -37,7 +37,7 @@ public class FavoritesController {
 
     private final Locale locale = Locale.ENGLISH;
 
-    @GetMapping("/show-favorites")
+    @GetMapping("/favorites/show")
     public ResponseEntity showFavorites() throws FavoritesCustomException {
         User authenticatedUser = userService.getAuthenticatedUser().get();
         List<Favorites> favoritesByUserAuthenticated =
@@ -50,7 +50,7 @@ public class FavoritesController {
         }
     }
 
-    @GetMapping("/search-favorites")
+    @GetMapping("/favorites/search")
     public ResponseEntity searchWishlist(@RequestParam String keyword) throws FavoritesCustomException {
         List<Favorites> searchForFavorites = favoritesService.searchWishlist(keyword);
         if(keyword.equals("") || keyword.equals(" ") ||
@@ -65,7 +65,7 @@ public class FavoritesController {
         }
     }
 
-    @PostMapping("/add-to-favorites/{postId}")
+    @PostMapping("/favorites/add/{postId}")
     public ResponseEntity addToFavorites(@PathVariable(name = "postId") long postId)
             throws FavoritesCustomException {
         Optional<Post> findPost =  postService.findByPostId(postId);
@@ -80,7 +80,7 @@ public class FavoritesController {
         }
     }
 
-    @DeleteMapping("/remove-from-favorites/{postId}")
+    @DeleteMapping("/favorites/remove/{postId}")
     public ResponseEntity removeFromFavorites(@PathVariable(name = "postId") long postId)
             throws FavoritesCustomException, PostCustomException {
         Optional<Post> findPost =  postService.findByPostId(postId);

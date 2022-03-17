@@ -1,6 +1,6 @@
 package ecommerce.web.app.domain.controller;
 
-import ecommerce.web.app.domain.model.ChargeRequest;
+import ecommerce.web.app.entity.ChargeRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

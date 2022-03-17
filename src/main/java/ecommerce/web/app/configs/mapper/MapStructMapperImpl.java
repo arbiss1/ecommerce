@@ -1,12 +1,10 @@
-package ecommerce.web.app.domain.model.mapper;
+package ecommerce.web.app.configs.mapper;
 
-import ecommerce.web.app.domain.model.Post;
-import ecommerce.web.app.domain.model.User;
-import ecommerce.web.app.domain.model.dto.PostRequest;
-import ecommerce.web.app.domain.model.dto.UserRegisterRequest;
+import ecommerce.web.app.entity.Post;
+import ecommerce.web.app.entity.User;
+import ecommerce.web.app.domain.model.PostRequest;
+import ecommerce.web.app.domain.model.UserRegisterRequest;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class MapStructMapperImpl implements MapStructMapper{

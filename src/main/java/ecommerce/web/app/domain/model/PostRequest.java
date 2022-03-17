@@ -1,11 +1,11 @@
-package ecommerce.web.app.domain.model.dto;
+package ecommerce.web.app.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
-import ecommerce.web.app.domain.model.Category;
-import ecommerce.web.app.domain.model.ImageUpload;
-import ecommerce.web.app.domain.model.Subcategory;
+import ecommerce.web.app.entity.Category;
+import ecommerce.web.app.entity.ImageUpload;
+import ecommerce.web.app.entity.Subcategory;
 import lombok.Data;
 
 import java.util.List;

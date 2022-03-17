@@ -2,8 +2,8 @@ package ecommerce.web.app.domain.controller;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
-import ecommerce.web.app.domain.model.ChargeRequest;
-import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.entity.ChargeRequest;
+import ecommerce.web.app.entity.User;
 import ecommerce.web.app.domain.service.StripeService;
 import ecommerce.web.app.domain.repository.CardRepository;
 import ecommerce.web.app.domain.service.UserService;

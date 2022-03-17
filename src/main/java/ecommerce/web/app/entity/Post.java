@@ -1,4 +1,4 @@
-package ecommerce.web.app.domain.model;
+package ecommerce.web.app.entity;
 
 import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.enums.AdvertIndex;

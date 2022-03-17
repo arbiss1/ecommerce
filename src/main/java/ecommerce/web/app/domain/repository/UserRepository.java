@@ -1,6 +1,6 @@
 package ecommerce.web.app.domain.repository;
 
-import ecommerce.web.app.domain.model.User;
+import ecommerce.web.app.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

@@ -2,14 +2,16 @@ package ecommerce.web.app.domain.controller;
 
 import ecommerce.web.app.authentication.service.JwtTokenUtil;
 import ecommerce.web.app.authentication.model.JwtResponse;
-import ecommerce.web.app.domain.model.User;
-import ecommerce.web.app.domain.model.dto.UserLoginRequest;
-import ecommerce.web.app.domain.model.dto.UserRegisterRequest;
+import ecommerce.web.app.entity.User;
+import ecommerce.web.app.domain.model.UserLoginRequest;
+import ecommerce.web.app.domain.model.UserRegisterRequest;
+import ecommerce.web.app.domain.repository.UserRepository;
 import ecommerce.web.app.domain.service.UserService;
 import ecommerce.web.app.exception.customExceptions.EmailAlreadyExists;
 import ecommerce.web.app.exception.customExceptions.PhoneNumberAlreadyExists;
+import ecommerce.web.app.exception.customExceptions.UserNotFoundException;
 import ecommerce.web.app.exception.customExceptions.UsernameAlreadyExists;
-import ecommerce.web.app.domain.model.mapper.MapStructMapper;
+import ecommerce.web.app.configs.mapper.MapStructMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.Locale;
 import java.util.Objects;
@@ -37,19 +38,22 @@ public class JwtAuthenticationController {
 	private final UserService userService;
 	private final MessageSource messageByLocale;
 	private final MapStructMapper mapStructMapper;
+	private final UserRepository userRepository;
 
 	public JwtAuthenticationController(AuthenticationManager authenticationManager,
 									   JwtTokenUtil jwtTokenUtil,
 									   UserDetailsService jwtInMemoryUserDetailsService,
 									   UserService userService,
 									   MessageSource messageByLocale,
-									   MapStructMapper mapStructMapper){
+									   MapStructMapper mapStructMapper,
+									   UserRepository userRepository){
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenUtil = jwtTokenUtil;
 		this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
 		this.userService = userService;
 		this.messageByLocale = messageByLocale;
 		this.mapStructMapper = mapStructMapper;
+		this.userRepository = userRepository;
 	}
 
 	private final Locale locale = Locale.ENGLISH;
@@ -92,6 +96,20 @@ public class JwtAuthenticationController {
         }
         return new ResponseEntity(userRegisterRequest, HttpStatus.OK);
     }
+
+	@DeleteMapping("/delete/user/{userId}")
+	public ResponseEntity deleteUser(@PathVariable(name = "userId") long userId)
+			throws UserNotFoundException {
+		Optional<User> findUser = userRepository.findById(userId);
+		if(!findUser.isPresent()){
+			throw new UserNotFoundException(
+					messageByLocale.getMessage("error.404.userNotFound", null, locale)
+			);
+		}else {
+			userRepository.deleteById(userId);
+		}
+		return new ResponseEntity("User with id " + userId + " was deleted successfully",HttpStatus.ACCEPTED);
+	}
 
 	private void authenticate(String username, String password) throws Exception {
 		Objects.requireNonNull(username);

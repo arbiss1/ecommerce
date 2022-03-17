@@ -1,4 +1,4 @@
-package ecommerce.web.app.domain.model;
+package ecommerce.web.app.entity;
 
 import lombok.Data;
 import javax.persistence.*;
