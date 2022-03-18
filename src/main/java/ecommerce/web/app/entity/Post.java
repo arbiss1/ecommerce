@@ -4,6 +4,8 @@ import ecommerce.web.app.domain.enums.PostStatus;
 import ecommerce.web.app.domain.enums.AdvertIndex;
 import ecommerce.web.app.domain.enums.Currency;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -11,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "post")
 @Data
@@ -44,12 +47,12 @@ public class Post extends BaseEntity {
     private User user;
     @Size(max = 5, min = 1)
     @NotNull(message = "Images must not be empty")
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "post_image_uploads_mapped_list")
     private List<ImageUpload> imageUrls;
     @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "subcategories_mapped_list")
     private List<Subcategory> subcategory;
     @Column(name = "post_status")

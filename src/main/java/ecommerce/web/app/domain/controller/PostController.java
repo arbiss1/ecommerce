@@ -1,6 +1,5 @@
 package ecommerce.web.app.domain.controller;
 
-
 import ecommerce.web.app.entity.ImageUpload;
 import ecommerce.web.app.entity.Post;
 import ecommerce.web.app.domain.model.PostRequest;
@@ -18,7 +17,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
 
 @RestController
 @CrossOrigin
@@ -71,7 +69,6 @@ public class PostController {
 
     @GetMapping("/post/all")
     public ResponseEntity<Post> listAllPosts() throws PostCustomException {
-//        Pageable firstPageWithTwoElements = PageRequest.of(0,3);
         List<Post> listOfPosts = postService.findAll();
         if(listOfPosts.isEmpty()){
             throw new PostCustomException(
@@ -109,10 +106,10 @@ public class PostController {
         }
     }
 
-    @PutMapping("/post/edit{postId}")
+    @PutMapping("/post/edit/{postId}")
     public ResponseEntity<Post> editPost(@PathVariable (name = "postId") long postId ,
                                          @RequestBody PostRequest post, BindingResult result)
-                                         throws PostCustomException {
+            throws PostCustomException, UserNotFoundException {
         Optional<Post> findPost = postService.findByPostId(postId);
         if(result.hasErrors()){
             return new ResponseEntity(result.getAllErrors(),HttpStatus.CONFLICT);
@@ -128,7 +125,7 @@ public class PostController {
         }
     }
 
-    @DeleteMapping("/post/delete{postId}")
+    @DeleteMapping("/post/delete/{postId}")
     public ResponseEntity<Post> deletePost(@PathVariable(name = "postId") long postId)
             throws PostCustomException {
         Optional<Post> findPost = postService.findByPostId(postId);

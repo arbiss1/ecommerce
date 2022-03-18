@@ -9,17 +9,13 @@ import ecommerce.web.app.domain.repository.CategoryRepository;
 import ecommerce.web.app.domain.repository.PostRepository;
 import ecommerce.web.app.configs.mapper.MapStructMapper;
 import ecommerce.web.app.domain.repository.SubcategoryRepository;
-import ecommerce.web.app.entity.Category;
-import ecommerce.web.app.entity.ImageUpload;
-import ecommerce.web.app.entity.Post;
-import ecommerce.web.app.entity.User;
+import ecommerce.web.app.entity.*;
 import ecommerce.web.app.exception.customExceptions.PostCustomException;
 import ecommerce.web.app.exception.customExceptions.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +53,6 @@ public class PostService {
             "api_key", "966843127668939",
             "api_secret", "dqIiglHTAoRuYD2j887wmCk56vU"));
 
-    @Async
     public List<ImageUpload> postImageUpload(@NotNull List<ImageUpload> absoluteFilePath) {
         List<Object> transferUrlsToStorage = new ArrayList<>();
         absoluteFilePath.forEach(imageUpload -> {
@@ -72,12 +67,12 @@ public class PostService {
                     e.printStackTrace();
                 }
             }
-            transferUrlsToStorage.add(uploadResult.get("url"));
+            transferUrlsToStorage.add(uploadResult != null ? uploadResult.get("url") : null);
         });
         final int[] count = {0};
-        transferUrlsToStorage.forEach(o -> {
-            absoluteFilePath.get(count[0]++).setImageUrl(o.toString());
-        });
+        transferUrlsToStorage.forEach(transferUrlToStorage ->
+            absoluteFilePath.get(count[0]++).setImageUrl(transferUrlToStorage.toString())
+        );
         if (absoluteFilePath.isEmpty()) {
             return null;
         } else {
@@ -98,7 +93,7 @@ public class PostService {
     public Post savePost(Post post, Optional<User> userAuth, List<ImageUpload> postsImageUrls)
             throws UserNotFoundException {
         List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-        User getAuthenticatedUser = null;
+        User getAuthenticatedUser;
         if(userAuth.isPresent()){
             getAuthenticatedUser = userAuth.get();
         }
@@ -121,18 +116,17 @@ public class PostService {
         post.setImageUrls(uploadImagesToCloudinary);
         post.setStatus(PostStatus.PENDING);
         post.setPostAdvertIndex(AdvertIndex.FREE);
-        Optional<Category> category = categoryRepository.findCategoryByName(post.getCategory().getName());
-        category.ifPresent(post::setCategory);
         return postRepository.save(post);
     }
 
-
-    public Post changeStatusToActive(Post post, Optional<User> userAuth) {
+    public Post changeStatusToActive(Post post, Optional<User> userAuth) throws PostCustomException {
         Optional<Post> findIfPostExist = postRepository.findById(post.getId());
         if (findIfPostExist.isPresent()) {
             post.setStatus(PostStatus.ACTIVE);
         } else {
-            post.setStatus(PostStatus.PENDING);
+            throw new PostCustomException(
+                    messageByLocale.getMessage("error.404.postNotFound", null, locale)
+            );
         }
         return postRepository.save(post);
     }
@@ -154,11 +148,17 @@ public class PostService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Post editPost(long postId, Post post, Optional<User> authenticatedUser, List<ImageUpload> postsImageUrls) throws PostCustomException {
+    public Post editPost(long postId, Post post, Optional<User> authenticatedUser, List<ImageUpload> postsImageUrls)
+            throws PostCustomException, UserNotFoundException {
+        if(!authenticatedUser.isPresent()){
+            throw new UserNotFoundException(
+                    messageByLocale.getMessage("error.404.userNotFound", null, locale)
+            );
+        }
         Optional<Post> findPost = postRepository.findById(postId);
         if (findPost.isPresent()) {
-            Post ediatblePost = findPost.get();
-            ediatblePost.getImageUrls().forEach(imageUpload -> {
+            Post editablePost = findPost.get();
+            editablePost.getImageUrls().forEach(imageUpload -> {
                 String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
                 String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
                 try {
@@ -168,18 +168,20 @@ public class PostService {
                 }
             });
             List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-            ediatblePost.setPrice(post.getPrice());
-            ediatblePost.setDescription(post.getDescription());
-            ediatblePost.setCurrency(post.getCurrency());
-            ediatblePost.setCategory(post.getCategory());
-            ediatblePost.setSubcategory(post.getSubcategory());
-            ediatblePost.setTitle(post.getTitle());
-            ediatblePost.setLastModifiedBy(authenticatedUser.get().getUsername());
-            ediatblePost.setLastModifiedDate(LocalDateTime.now());
-            ediatblePost.setImageUrls(uploadImagesToCloudinary);
-            return postRepository.save(ediatblePost);
+            editablePost.setPrice(post.getPrice());
+            editablePost.setDescription(post.getDescription());
+            editablePost.setCurrency(post.getCurrency());
+            editablePost.setCategory(post.getCategory());
+            editablePost.setSubcategory(post.getSubcategory());
+            editablePost.setTitle(post.getTitle());
+            editablePost.setLastModifiedBy(authenticatedUser.get().getUsername());
+            editablePost.setLastModifiedDate(LocalDateTime.now());
+            editablePost.setImageUrls(uploadImagesToCloudinary);
+            return postRepository.save(editablePost);
         } else {
-            throw new PostCustomException(messageByLocale.getMessage("error.409.postNotPostedServerError", null, locale));
+            throw new PostCustomException(messageByLocale.getMessage(
+                    "error.409.postNotPostedServerError", null, locale)
+            );
         }
     }
 
