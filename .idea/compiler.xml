@@ -8,11 +8,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Ecommerce" />
+        <module name="server" />
+        <module name="persistence" />
+        <module name="ECOMMERCE-back" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ECOMMERCE-back" options="-parameters" />
       <module name="Ecommerce" options="-parameters" />
     </option>
   </component>
