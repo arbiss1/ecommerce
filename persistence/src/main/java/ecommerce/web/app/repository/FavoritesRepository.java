@@ -26,6 +26,6 @@ public interface FavoritesRepository extends JpaRepository<Favorites,Long> {
     @Modifying
     @Transactional
     @Query(nativeQuery = true , value = "DELETE FROM ecommerce.wishlist WHERE wishlist_id = :wishlistId ;")
-    void removeFromFavorites(@Param(value = "wishlistId") long wishlistId);
+    void removeFromFavorites(@Param(value = "wishlistId") String wishlistId);
 
 }

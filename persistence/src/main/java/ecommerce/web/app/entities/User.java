@@ -1,9 +1,9 @@
 package ecommerce.web.app.entities;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "users")
+@AllArgsConstructor
 public class User extends BaseEntity {
 
     private static final long serialVersionUID = 5926468583005150707L;
@@ -30,4 +31,5 @@ public class User extends BaseEntity {
     private String phoneNumber;
     private String address;
     private String role;
+
 }

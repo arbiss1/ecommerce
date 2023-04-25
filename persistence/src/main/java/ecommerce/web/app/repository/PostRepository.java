@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
-    List<Post> findByUserId(long userId);
+    List<Post> findByUserId(String userId);
 
-    Optional<Post> findById(long postId);
+    Optional<Post> findById(String postId);
 
     @Query(nativeQuery = true,value = "SELECT * FROM ecommerce.post WHERE title LIKE %:keyword% " +
             "OR category LIKE %:keyword% OR subcategory LIKE %:keyword% OR description LIKE %:keyword%")

@@ -150,7 +150,7 @@ public class PostService {
         return postRepository.searchPosts(keyword);
     }
 
-    public List<Post> findByUserId(long userId) {
+    public List<Post> findByUserId(String userId) {
         return postRepository.findByUserId(userId);
     }
 

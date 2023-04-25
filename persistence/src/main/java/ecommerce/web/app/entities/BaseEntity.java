@@ -17,7 +17,7 @@ public abstract class BaseEntity implements Serializable {
 
     @Id
     @UuidGenerator
-    private UUID id;
+    private String id;
     @CreatedDate
     private LocalDateTime createdDate;
     @CreatedBy

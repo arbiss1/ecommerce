@@ -11,18 +11,19 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card,Long> {
 
 
     @Query(nativeQuery = true,value = "SELECT sum(total_price) FROM ecommerce.card WHERE ordered_by_user = :user_id")
-    int getTotalPrice(@Param(value = "user_id")long user_id);
+    int getTotalPrice(@Param(value = "user_id") String user_id);
 
     @Modifying
     @Transactional
     @Query(nativeQuery = true , value = "DELETE FROM ecommerce.card WHERE card_id = :cardId ;")
-    void removeFromCard(@Param(value = "cardId") long cardId);
+    void removeFromCard(@Param(value = "cardId") String cardId);
 
     Card findCardByUserAndPost(User getAuthenticatedUser, Post findPost);
 
