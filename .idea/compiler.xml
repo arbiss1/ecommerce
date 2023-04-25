@@ -7,17 +7,22 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Ecommerce" />
         <module name="server" />
         <module name="persistence" />
-        <module name="ECOMMERCE-back" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ECOMMERCE-back" target="1.8" />
+      <module name="persistence.main" target="17" />
+      <module name="persistence.test" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ECOMMERCE-back" options="-parameters" />
       <module name="Ecommerce" options="-parameters" />
+      <module name="persistence" options="-parameters" />
+      <module name="server" options="-parameters" />
     </option>
   </component>
 </project>
