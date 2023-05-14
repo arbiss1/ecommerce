@@ -9,12 +9,7 @@ import javax.persistence.*;
 @Table(name = "favorites")
 public class Favorites extends BaseEntity {
 
-
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "post_id")
     private Post post ;
-
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
-    private User user;
 }

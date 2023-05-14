@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface FavoritesRepository extends JpaRepository<Favorites,Long> {
+public interface FavoritesRepository extends JpaRepository<Favorites, String> {
 
 //    Wishlist deleteWishlistByWishlistId(long wishlistId);
 
@@ -22,10 +22,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites,Long> {
     List<Favorites> findFavoritesByUser(User authenticatedUser);
 
     List<Favorites> searchFavoritesByPostLike(String keyword);
-
-    @Modifying
-    @Transactional
-    @Query(nativeQuery = true , value = "DELETE FROM ecommerce.wishlist WHERE wishlist_id = :wishlistId ;")
-    void removeFromFavorites(@Param(value = "wishlistId") String wishlistId);
 
 }

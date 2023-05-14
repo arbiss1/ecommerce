@@ -6,7 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UserRegisterRequest {
+public class UserRequest {
 
     @JsonProperty("username")
     @NotEmpty(message = "Username empty")

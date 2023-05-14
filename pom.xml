@@ -11,7 +11,7 @@
     <!-- lookup parent from repository --> 
   </parent>  
   <groupId>ecommerce.web.app</groupId>  
-  <artifactId>Ecommerce</artifactId>  
+  <artifactId>web-ecommerce</artifactId>
   <version>0.0.1-SNAPSHOT</version>  
   <packaging>pom</packaging>
   <name>Ecommerce</name>

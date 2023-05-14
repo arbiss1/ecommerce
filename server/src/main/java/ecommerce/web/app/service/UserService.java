@@ -1,35 +1,68 @@
 package ecommerce.web.app.service;
 
-import ecommerce.web.app.controller.model.UserRegisterRequest;
+import ecommerce.web.app.controller.model.UserRequest;
 import ecommerce.web.app.entities.User;
+import ecommerce.web.app.exceptions.UserNotFoundException;
+import ecommerce.web.app.exceptions.UsernameAlreadyExists;
 import ecommerce.web.app.repository.UserRepository;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
     public final UserRepository userRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final MessageSource messageByLocale;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, MessageSource messageByLocale){
         this.userRepository = userRepository;
+        this.messageByLocale = messageByLocale;
     }
 
-    public List<User> listAll(){
-        userRepository.findAll().forEach(user -> {
-            System.out.println(user);
-        });
-        return userRepository.findAll();
+    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final Locale locale = Locale.ENGLISH;
+
+    public User findById(String userId) throws UserNotFoundException {
+        Optional<User> findUser = userRepository.findById(userId);
+        if(findUser.isEmpty()){
+            throw new UserNotFoundException(
+                    messageByLocale.getMessage("error.404.userNotFound", null, locale)
+            );
+        }
+        return findUser.get();
     }
 
-    public User saveUser(UserRegisterRequest userRegisterRequest){
-        User user = mapUser(userRegisterRequest);
+    public void deleteUser(String userId) throws UserNotFoundException {
+        userRepository.deleteById(findById(userId).getId());
+    }
+
+    public User saveUser(UserRequest userRequest, BindingResult result) throws UsernameAlreadyExists {
+        if (result.hasErrors()) {
+            throw new UsernameAlreadyExists(
+                    messageByLocale.getMessage(result.getAllErrors().toString(), null, locale)
+            );
+        }
+        Optional<User> findIfUserIsIdentified = userRepository.findByUsernameOrEmailOrPhoneNumber(
+                userRequest.getUsername(),
+                userRequest.getEmail(),
+                userRequest.getPhoneNumber()
+        );
+
+        if(findIfUserIsIdentified.isPresent()){
+            throw new UsernameAlreadyExists(messageByLocale.getMessage("error.409.userExists",null,locale));
+        }
+
+        User user = mapUser(userRequest);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setLastModifiedDate(LocalDateTime.now());
         user.setCreatedDate(LocalDateTime.now());
@@ -38,50 +71,32 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User mapUser(UserRegisterRequest userRegisterRequest){
+    public User mapUser(UserRequest userRequest){
         return new User(
-                userRegisterRequest.getUsername(),
-                userRegisterRequest.getPassword(),
-                userRegisterRequest.getFirstName(),
-                userRegisterRequest.getLastName(),
-                userRegisterRequest.getCity(),
-                userRegisterRequest.getCountry(),
-                userRegisterRequest.getEmail(),
-                userRegisterRequest.getPhoneNumber(),
-                userRegisterRequest.getAddress(),
+                userRequest.getUsername(),
+                userRequest.getPassword(),
+                userRequest.getFirstName(),
+                userRequest.getLastName(),
+                userRequest.getCity(),
+                userRequest.getCountry(),
+                userRequest.getEmail(),
+                userRequest.getPhoneNumber(),
+                userRequest.getAddress(),
                 "USER"
         );
     }
 
-    public Optional<User> getAuthenticatedUser(){
+    public User getAuthenticatedUser() throws UserNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         String username = userDetails.getUsername();
-
-        Optional<User> userAuth = userRepository.findByUsername(username);
-
-        return userAuth;
+        Optional<User> response = userRepository.findByUsername(username);
+        if(response.isEmpty()){
+            throw new UserNotFoundException(messageByLocale.getMessage(
+                    "error.404.userNotFound", null, locale)
+            );
+        }
+        return userRepository.findByUsername(username).get();
     }
-
-    public Optional<User> findByUsername(String username){
-       return userRepository.findByUsername(username);
-    }
-
-    public boolean isUsernamePresent(User user) {
-        return listAll().stream().anyMatch(username -> username.getUsername().equals(user.getUsername()));
-    }
-
-    public Optional<User> findByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber);
-    }
-
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-//    public boolean isUserValid(User user ){
-//        return listAll().stream().anyMatch(p -> p.getPassword().equals(user.getPassword())
-//                && p.getUsername().equals(user.getUsername()));
-//    }
 
 }
