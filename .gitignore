@@ -1,0 +1,34 @@
+# User-specific stuff:
+.env
+
+# IntelliJ
+/out/
+.idea
+
+# Visual Studio Code
+/bin
+.vscode
+.sts4-cache
+.project
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.classpath
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+.idea
+**/.idea
+**/*.iml
+**/target

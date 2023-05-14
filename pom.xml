@@ -6,29 +6,38 @@
     <groupId>org.springframework.boot</groupId>  
     <artifactId>spring-boot-starter-parent</artifactId>  
     <version>2.5.4</version>  
-    <relativePath/>  
+    <relativePath/>
+
     <!-- lookup parent from repository --> 
   </parent>  
   <groupId>ecommerce.web.app</groupId>  
-  <artifactId>Ecommerce</artifactId>  
+  <artifactId>web-ecommerce</artifactId>
   <version>0.0.1-SNAPSHOT</version>  
-  <packaging>jar</packaging>
-  <name>Ecommerce</name>  
-  <description>Ecommerce application</description>  
-  <properties> 
+  <packaging>pom</packaging>
+  <name>Ecommerce</name>
+  <description>Ecommerce application</description>
+
+  <modules>
+    <module>server</module>
+    <module>persistence</module>
+  </modules>
+
+  <properties>
     <java.version>1.8</java.version>  
     <kotlin.version>1.6.10</kotlin.version> 
-  </properties>  
+  </properties>
+
   <dependencies> 
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-data-jpa</artifactId>  
-      <version>2.6.4</version> 
-    </dependency>  
+      <version>3.0.4</version>
+    </dependency>
+
     <dependency> 
       <groupId>com.paypal.sdk</groupId>  
       <artifactId>rest-api-sdk</artifactId>  
-      <version>1.4.2</version> 
+      <version>1.12.0</version>
     </dependency>  
     <dependency> 
       <groupId>org.mockito</groupId>  
@@ -45,24 +54,24 @@
       <groupId>org.passay</groupId>  
       <artifactId>passay</artifactId>  
       <version>1.6.0</version> 
-    </dependency>  
-    <dependency> 
-      <groupId>org.springframework.boot</groupId>  
-      <artifactId>spring-boot-starter-web</artifactId>  
-      <version>2.5.4</version> 
-    </dependency>  
-    <!--  security-->  
-    <dependency> 
-      <groupId>org.springframework.boot</groupId>  
-      <artifactId>spring-boot-starter-security</artifactId>  
-      <version>2.6.1</version> 
-    </dependency>  
-    <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->  
-    <dependency> 
-      <groupId>org.springframework.security</groupId>  
-      <artifactId>spring-security-web</artifactId>  
-      <version>5.6.0</version> 
-    </dependency>  
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>2.5.4</version>
+    </dependency>
+    <!--  security-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+      <version>2.6.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>5.6.0</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->  
     <dependency> 
       <groupId>javax.validation</groupId>  
@@ -72,13 +81,13 @@
     <dependency> 
       <groupId>org.jetbrains</groupId>  
       <artifactId>annotations</artifactId>  
-      <version>23.0.0</version>  
+      <version>24.0.1</version>
       <scope>compile</scope> 
     </dependency>  
     <dependency> 
       <groupId>org.projectlombok</groupId>  
       <artifactId>lombok</artifactId>  
-      <version>1.18.20</version>  
+      <version>1.18.26</version>
       <optional>true</optional> 
     </dependency>  
     <dependency> 
@@ -148,14 +157,7 @@
             <exclude> 
               <groupId>org.projectlombok</groupId>  
               <artifactId>lombok</artifactId> 
-            </exclude>  
-            <!--						<annotationProcessorPaths>-->  
-            <!--							<path>-->  
-            <!--								<groupId>org.mapstruct</groupId>-->  
-            <!--								<artifactId>mapstruct-processor</artifactId>-->  
-            <!--								<version>1.3.1.Final</version>-->  
-            <!--							</path>-->  
-            <!--						</annotationProcessorPaths>--> 
+            </exclude>
           </excludes> 
         </configuration> 
       </plugin>  
