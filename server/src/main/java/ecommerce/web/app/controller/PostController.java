@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/post")
 public class PostController {
 
     public final UserService userService;
@@ -30,38 +31,38 @@ public class PostController {
         this.messageByLocale = messageByLocale;
     }
 
-    @PostMapping("/create/post")
-    public ResponseEntity<PostResponse> createNewPost(@Valid @RequestBody PostRequest postRequest, BindingResult result) throws UserNotFoundException {
-            return ResponseEntity.ok(postService.savePost(postRequest, userService.getAuthenticatedUser(), postRequest.getImageUrls(), result));
+    @PostMapping("/create")
+    public ResponseEntity<PostResponse> create(@Valid @RequestBody PostRequest postRequest, BindingResult result) throws UserNotFoundException {
+            return ResponseEntity.ok(postService.save(postRequest, userService.getAuthenticatedUser(), postRequest.getImageUrls(), result));
     }
 
-    @PostMapping("/post/activate/{postId}")
-    public ResponseEntity<String> activatePost(@PathVariable(value = "postId") String postId) throws PostCustomException {
-            return ResponseEntity.ok(postService.changeStatusToActive(postId));
+    @PostMapping("/activate/{postId}")
+    public ResponseEntity<String> activate(@PathVariable(value = "postId") String postId) throws PostCustomException {
+            return ResponseEntity.ok(postService.changeStatus(postId));
     }
 
-    @GetMapping("/posts")
-    public ResponseEntity<List<PostDetails>> listAllPosts() throws PostCustomException {
+    @GetMapping("/all")
+    public ResponseEntity<List<PostDetails>> list() throws PostCustomException {
             return ResponseEntity.ok(postService.findAll());
     }
 
-    @GetMapping("/posts/search")
-    public ResponseEntity<List<PostDetails>> searchPosts(@RequestParam @NotEmpty @NotBlank String keyword) throws PostCustomException {
-            return ResponseEntity.ok(postService.searchPosts(keyword));
+    @GetMapping("/search")
+    public ResponseEntity<List<PostDetails>> search(@RequestParam @NotEmpty @NotBlank String keyword) throws PostCustomException {
+            return ResponseEntity.ok(postService.search(keyword));
     }
 
-    @GetMapping("/user/post")
-    public ResponseEntity<List<PostDetails>> listPostsByAuthenticatedUser() throws PostCustomException, UserNotFoundException {
-            return ResponseEntity.ok(postService.findPostsByUserId(userService.getAuthenticatedUser().getId()));
+    @GetMapping("/user")
+    public ResponseEntity<List<PostDetails>> listByUser() throws PostCustomException, UserNotFoundException {
+            return ResponseEntity.ok(postService.findByAuthenticatedUser(userService.getAuthenticatedUser().getId()));
     }
 
-    @PutMapping("/edit/post/{postId}")
-    public ResponseEntity<PostResponse> editPost(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException {
-            return ResponseEntity.ok(postService.editPost(postId, postRequest, userService.getAuthenticatedUser(), postRequest.getImageUrls(), result));
+    @PutMapping("/edit/{postId}")
+    public ResponseEntity<PostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException {
+            return ResponseEntity.ok(postService.edit(postId, postRequest, userService.getAuthenticatedUser(), result));
     }
 
-    @DeleteMapping("/delete/post/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable(name = "postId") String postId) {
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<Void> delete(@PathVariable(name = "postId") String postId) throws PostCustomException {
             postService.deleteById(postId);
             return ResponseEntity.ok().build();
         }

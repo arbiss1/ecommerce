@@ -49,9 +49,9 @@ public class CardService {
         }
         Card card = new Card();
         card.setCreatedBy(getAuthenticatedUser.getUsername());
-        card.setCreatedDate(LocalDateTime.now());
-        card.setLastModifiedDate(LocalDateTime.now());
-        card.setLastModifiedBy(getAuthenticatedUser.getUsername());
+        card.setCreatedAt(LocalDateTime.now());
+        card.setModifiedAt(LocalDateTime.now());
+        card.setModifiedBy(getAuthenticatedUser.getUsername());
         card.setPost(getFoundPost);
         card.setTotalPrice(getFoundPost.getPrice());
         System.out.println(getFoundPost.getPrice());

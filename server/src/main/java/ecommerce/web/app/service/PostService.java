@@ -1,7 +1,5 @@
 package ecommerce.web.app.service;
 
-import com.cloudinary.Transformation;
-import com.cloudinary.utils.ObjectUtils;
 import ecommerce.web.app.controller.enums.PostStatus;
 import ecommerce.web.app.controller.model.PostResponse;
 import ecommerce.web.app.controller.model.PostDetails;
@@ -13,66 +11,34 @@ import ecommerce.web.app.repository.CategoryRepository;
 import ecommerce.web.app.repository.PostRepository;
 import ecommerce.web.app.repository.SubcategoryRepository;
 import ecommerce.web.app.entities.*;
-import org.jetbrains.annotations.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PostService {
 
     public final PostRepository postRepository;
     public final MessageSource messageByLocale;
     public final CategoryRepository categoryRepository;
     public final SubcategoryRepository subcategoryRepository;
-    public final CloudinaryService cloudinaryService;
+    public final ImageUploadService imageUploadService;
     private final Locale locale = Locale.ENGLISH;
 
-
-
-    public PostService(PostRepository postRepository, MessageSource messageByLocale, CategoryRepository categoryRepository, SubcategoryRepository subcategoryRepository, CloudinaryService cloudinaryService) {
-        this.postRepository = postRepository;
-        this.messageByLocale = messageByLocale;
-        this.categoryRepository = categoryRepository;
-        this.subcategoryRepository = subcategoryRepository;
-        this.cloudinaryService = cloudinaryService;
-    }
-
-    public List<ImageUpload> postImageUpload(@NotNull List<ImageUpload> absoluteFilePath) {
-        List<Object> transferUrlsToStorage = new ArrayList<>();
-        absoluteFilePath.forEach(imageUpload -> {
-            File file = new File(imageUpload.getImageUrl());
-            Map uploadResult = null;
-            {
-                try {
-                    uploadResult = cloudinaryService.uploader(file, ObjectUtils.asMap
-                            (
-                                    "transformation", new Transformation().width(1600).height(1000).quality(40).crop("pad").background("auto")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            transferUrlsToStorage.add(uploadResult != null ? uploadResult.get("url") : null);
-        });
-        final int[] count = {0};
-        transferUrlsToStorage.forEach(transferUrlToStorage ->
-            absoluteFilePath.get(count[0]++).setImageUrl(transferUrlToStorage.toString())
-        );
-        if (absoluteFilePath.isEmpty()) {
-            return null;
-        } else {
-            return absoluteFilePath;
+    public void postImageUpload(List<ImageUpload> imageUploads){
+        for (ImageUpload imageUpload : imageUploads) {
+            imageUploadService.saveImage(imageUpload);
         }
     }
 
-    public PostResponse savePost(PostRequest postRequest, User userAuth, List<ImageUpload> postsImageUrls, BindingResult result
+    public PostResponse save(PostRequest postRequest, User userAuth, List<String> postsImageUrls, BindingResult result
     ) throws UserNotFoundException {
         if (result.hasErrors()) {
             throw new UserNotFoundException(
@@ -81,12 +47,19 @@ public class PostService {
                     )
             );
         }
-        List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
-        return new PostResponse(postRepository.save(mapToPost(postRequest, userAuth, uploadImagesToCloudinary)).getId());
+        Post post = postRepository.save(mapToPost(postRequest, userAuth));
+        List<ImageUpload> imageUploads = new ArrayList<>();
+        for (String postsImageUrl : postsImageUrls) {
+            ImageUpload imageUpload = new ImageUpload();
+            imageUpload.setPost(post);
+            imageUpload.setProfileImage(postsImageUrl);
+            imageUploads.add(imageUpload);
+        }
+        postImageUpload(imageUploads);
+        return new PostResponse(post.getId());
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public PostResponse editPost(String postId, PostRequest postRequest, User authUser, List<ImageUpload> postsImageUrls, BindingResult result)
+    public PostResponse edit(String postId, PostRequest postRequest, User authUser, BindingResult result)
             throws PostCustomException {
         if (result.hasErrors()) {
             throw new PostCustomException(
@@ -96,25 +69,14 @@ public class PostService {
         Optional<Post> findPost = postRepository.findById(postId);
         if (findPost.isPresent()) {
             Post editablePost = findPost.get();
-            editablePost.getImageUrls().forEach(imageUpload -> {
-                String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
-                String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
-                try {
-                    cloudinaryService.deleteImage(publicId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            List<ImageUpload> uploadImagesToCloudinary = postImageUpload(postsImageUrls);
             editablePost.setPrice(postRequest.getPrice());
             editablePost.setDescription(postRequest.getDescription());
             editablePost.setCurrency(postRequest.getCurrency().mapToStatus());
             editablePost.setCategory(postRequest.getCategory());
             editablePost.setSubcategory(postRequest.getSubCategory());
             editablePost.setTitle(postRequest.getTitle());
-            editablePost.setLastModifiedBy(authUser.getUsername());
-            editablePost.setLastModifiedDate(LocalDateTime.now());
-            editablePost.setImageUrls(uploadImagesToCloudinary);
+            editablePost.setModifiedBy(authUser.getUsername());
+            editablePost.setModifiedAt(LocalDateTime.now());
             return new PostResponse(postRepository.save(editablePost).getId());
         } else {
             throw new PostCustomException(messageByLocale.getMessage(
@@ -123,7 +85,7 @@ public class PostService {
         }
     }
 
-    public String changeStatusToActive(String postId) throws PostCustomException {
+    public String changeStatus(String postId) throws PostCustomException {
         Optional<Post> findIfPostExist = postRepository.findById(postId);
         if (findIfPostExist.isPresent()) {
             findIfPostExist.get().setStatus(PostStatus.ACTIVE.mapToStatus());
@@ -144,7 +106,7 @@ public class PostService {
        return mapToPostDetails(response);
     }
 
-    public List<PostDetails> searchPosts(String keyword) throws PostCustomException {
+    public List<PostDetails> search(String keyword) throws PostCustomException {
         if (keyword.equals("") || keyword.equals(" ")) {
             throw new PostCustomException(
                     messageByLocale.getMessage("error.404.postNotFound", null, locale)
@@ -158,7 +120,7 @@ public class PostService {
         return mapToPostDetails(response);
     }
 
-    public List<PostDetails> findPostsByUserId(String userId) throws PostCustomException {
+    public List<PostDetails> findByAuthenticatedUser(String userId) throws PostCustomException {
         List<Post> response = postRepository.findByUserId(userId);
         if (response.isEmpty()) {
             throw new PostCustomException(
@@ -171,24 +133,15 @@ public class PostService {
         return postRepository.findById(postId);
     }
 
-    public void deleteById(String postId) {
-        Optional<Post> findPost = postRepository.findById(postId);
-        if (findPost.isPresent()) {
-            Post getPost = findPost.get();
-            getPost.getImageUrls().forEach(imageUpload -> {
-                String imageTag = imageUpload.getImageUrl().substring(imageUpload.getImageUrl().lastIndexOf("/") + 1);
-                String publicId = imageTag.substring(0, imageTag.lastIndexOf("."));
-                try {
-                    cloudinaryService.deleteImage(publicId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        postRepository.deleteById(postId);
+    public void deleteById(String postId) throws PostCustomException {
+        Post findPost = postRepository.findById(postId).orElseThrow(() ->
+                new PostCustomException(
+                        messageByLocale.getMessage("error.404.postNotFound", null, locale)));
+        postRepository.deleteById(findPost.getId());
+        imageUploadService.deleteImages(findPost);
     }
 
-    private Post mapToPost(PostRequest postRequest, User getAuthenticatedUser, List<ImageUpload> uploadImagesToCloudinary){
+    private Post mapToPost(PostRequest postRequest, User getAuthenticatedUser){
 
         Post post = new Post();
         post.setUser(getAuthenticatedUser);
@@ -198,11 +151,10 @@ public class PostService {
         post.setPhoneNumber(getAuthenticatedUser.getPhoneNumber());
         post.setCity(getAuthenticatedUser.getCity());
         post.setCountry(getAuthenticatedUser.getCountry());
-        post.setCreatedDate(LocalDateTime.now());
+        post.setCreatedAt(LocalDateTime.now());
         post.setCreatedBy(getAuthenticatedUser.getUsername());
-        post.setLastModifiedBy(getAuthenticatedUser.getUsername());
-        post.setLastModifiedDate(LocalDateTime.now());
-        post.setImageUrls(uploadImagesToCloudinary);
+        post.setModifiedBy(getAuthenticatedUser.getUsername());
+        post.setModifiedAt(LocalDateTime.now());
         post.setStatus(PostStatus.PENDING.mapToStatus());
         post.setPostAdvertIndex(postRequest.getAdvertIndex() != null ? postRequest.getAdvertIndex().mapToStatus() : AdvertIndex.FREE);
         post.setCurrency(postRequest.getCurrency().mapToStatus());
@@ -222,7 +174,6 @@ public class PostService {
                 post.getTitle(),
                 post.getDescription(),
                 post.getPrice(),
-                post.getImageUrls(),
                 post.getCategory(),
                 post.getSubcategory()
         )).collect(Collectors.toList());

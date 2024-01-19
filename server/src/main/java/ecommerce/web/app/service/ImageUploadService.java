@@ -1,7 +1,11 @@
 package ecommerce.web.app.service;
 
+import ecommerce.web.app.entities.ImageUpload;
+import ecommerce.web.app.entities.Post;
 import ecommerce.web.app.repository.ImageUploadRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ImageUploadService {
@@ -12,7 +16,19 @@ public class ImageUploadService {
         this.imageUploadRepository = imageUploadRepository;
     }
 
-    public void deleteImageUploaded(long id){
+    public void saveImage(ImageUpload imageUpload){
+        imageUploadRepository.save(imageUpload);
+    }
+
+    public void deleteImageUploaded(String id){
         imageUploadRepository.deleteById(id);
+    }
+
+    public List<ImageUpload> getListsOfImageByPost(Post post){
+        return imageUploadRepository.findAllByPost(post);
+    }
+
+    public void deleteImages(Post post){
+        imageUploadRepository.deleteAllByPost(post);
     }
 }

@@ -24,13 +24,13 @@ public class PostRequest {
     @JsonProperty("slug")
     private String slug;
     @JsonProperty("currency")
-    private Currency currency;
+    private Currency currency = Currency.ALL;
     @JsonProperty("advertIndex")
-    private AdvertIndex advertIndex;
+    private AdvertIndex advertIndex = AdvertIndex.FREE;
     @JsonProperty("category")
     private Category category;
     @JsonProperty("subCategory")
     private List<Subcategory> subCategory;
     @JsonProperty("imageUrls")
-    private List<ImageUpload> imageUrls;
+    private List<String> imageUrls;
 }

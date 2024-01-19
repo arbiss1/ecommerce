@@ -42,7 +42,7 @@ public class ExceptionHandler {
     }
 
     private ResponseEntity<ApiError> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity(apiError, apiError.getStatus());
+        return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
 }

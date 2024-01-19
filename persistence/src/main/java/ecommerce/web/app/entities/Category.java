@@ -1,7 +1,7 @@
 package ecommerce.web.app.entities;
 
 import lombok.Data;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Data

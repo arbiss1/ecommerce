@@ -1,16 +1,12 @@
 package ecommerce.web.app.service;
 
 import ecommerce.web.app.controller.model.FavoritesDetails;
-import ecommerce.web.app.controller.model.PostDetails;
 import ecommerce.web.app.entities.Post;
-import ecommerce.web.app.entities.User;
 import ecommerce.web.app.entities.Favorites;
 import ecommerce.web.app.exceptions.FavoritesCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.repository.FavoritesRepository;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,9 +42,9 @@ public class FavoritesService {
         Favorites favorites = new Favorites();
         favorites.setPost(post);
         favorites.setCreatedBy(post.getUser().getUsername());
-        favorites.setCreatedDate(LocalDateTime.now());
-        favorites.setLastModifiedBy(post.getUser().getUsername());
-        favorites.setLastModifiedDate(LocalDateTime.now());
+        favorites.setCreatedAt(LocalDateTime.now());
+        favorites.setModifiedBy(post.getUser().getUsername());
+        favorites.setModifiedAt(LocalDateTime.now());
         return favoritesRepository.save(favorites).getId();
     }
     @Transactional

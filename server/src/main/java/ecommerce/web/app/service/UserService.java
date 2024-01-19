@@ -1,19 +1,20 @@
 package ecommerce.web.app.service;
 
+import ecommerce.web.app.controller.model.GetUserResponse;
 import ecommerce.web.app.controller.model.UserRequest;
+import ecommerce.web.app.controller.model.UserResponse;
 import ecommerce.web.app.entities.User;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.exceptions.UsernameAlreadyExists;
 import ecommerce.web.app.repository.UserRepository;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
@@ -29,24 +30,39 @@ public class UserService {
         this.messageByLocale = messageByLocale;
     }
 
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    PasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private final Locale locale = Locale.ENGLISH;
 
-    public User findById(String userId) throws UserNotFoundException {
+    public GetUserResponse getUser(String userId) throws UserNotFoundException {
         Optional<User> findUser = userRepository.findById(userId);
         if(findUser.isEmpty()){
             throw new UserNotFoundException(
                     messageByLocale.getMessage("error.404.userNotFound", null, locale)
             );
         }
-        return findUser.get();
+        User user = findUser.get();
+        return new GetUserResponse(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getCity(),
+                user.getCountry(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getAddress()
+        );
     }
 
-    public void deleteUser(String userId) throws UserNotFoundException {
-        userRepository.deleteById(findById(userId).getId());
+    public User getByUsername(String username){
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public User saveUser(UserRequest userRequest, BindingResult result) throws UsernameAlreadyExists {
+    public void deleteUser(String userId) throws UserNotFoundException{
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        userRepository.deleteById(findUser.getId());
+    }
+
+    public UserResponse save(UserRequest userRequest, BindingResult result) throws UsernameAlreadyExists {
         if (result.hasErrors()) {
             throw new UsernameAlreadyExists(
                     messageByLocale.getMessage(result.getAllErrors().toString(), null, locale)
@@ -64,11 +80,11 @@ public class UserService {
 
         User user = mapUser(userRequest);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setLastModifiedDate(LocalDateTime.now());
-        user.setCreatedDate(LocalDateTime.now());
+        user.setModifiedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now());
         user.setCreatedBy(user.getUsername());
-        user.setLastModifiedBy(user.getUsername());
-        return userRepository.save(user);
+        user.setModifiedBy(user.getUsername());
+        return new UserResponse(userRepository.save(user).getId());
     }
 
     public User mapUser(UserRequest userRequest){
@@ -90,13 +106,10 @@ public class UserService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         String username = userDetails.getUsername();
-        Optional<User> response = userRepository.findByUsername(username);
-        if(response.isEmpty()){
-            throw new UserNotFoundException(messageByLocale.getMessage(
-                    "error.404.userNotFound", null, locale)
-            );
-        }
-        return userRepository.findByUsername(username).get();
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(messageByLocale.getMessage(
+                "error.404.userNotFound", null, locale)
+        ));
     }
 
 }

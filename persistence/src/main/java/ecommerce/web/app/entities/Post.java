@@ -5,7 +5,8 @@ import ecommerce.web.app.enums.Currency;
 import ecommerce.web.app.enums.PostStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -44,11 +45,6 @@ public class Post extends BaseEntity {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn
     private User user;
-    @Size(max = 5, min = 1)
-    @NotNull(message = "Images must not be empty")
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "post_image_uploads_mapped_list")
-    private List<ImageUpload> imageUrls;
     @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
     @ManyToMany(cascade = CascadeType.ALL)
@@ -57,5 +53,4 @@ public class Post extends BaseEntity {
     @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private PostStatus status;
-
 }

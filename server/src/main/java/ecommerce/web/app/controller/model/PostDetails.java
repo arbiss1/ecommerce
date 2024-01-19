@@ -14,7 +14,6 @@ public class PostDetails {
     private String title;
     private String description;
     private String price;
-    private List<ImageUpload> imageUrls;
     private Category category;
     private List<Subcategory> subcategory;
 }
