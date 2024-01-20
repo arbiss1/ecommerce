@@ -38,9 +38,9 @@ public class AuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GetUserResponse> get(@PathVariable(name = "id") String id) throws UserNotFoundException {
-        return ResponseEntity.ok(userService.get(id));
+    @GetMapping()
+    public ResponseEntity<GetUserResponse> get() throws UserNotFoundException {
+        return ResponseEntity.ok(userService.get());
     }
 
     @DeleteMapping("/delete/{id}")
