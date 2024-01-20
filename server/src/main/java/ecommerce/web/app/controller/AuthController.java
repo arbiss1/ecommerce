@@ -1,30 +1,30 @@
 package ecommerce.web.app.controller;
 
+import ecommerce.web.app.configs.JwtUtils;
 import ecommerce.web.app.controller.model.*;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.exceptions.UsernameAlreadyExists;
 import ecommerce.web.app.service.UserService;
 import ecommerce.web.app.service.auth.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class AuthController {
-
     private final UserService userService;
     private final AuthService authenticationService;
-
-    public AuthController(UserService userService, AuthService authenticationService) {
-        this.userService = userService;
-        this.authenticationService = authenticationService;
-    }
+    private final JwtUtils jwtUtils;
 
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<AuthUserResponse> createAuthenticationToken(@RequestBody AuthUserRequest authenticationRequest) {
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+    public ResponseEntity<AuthUserResponse> createAuthenticationToken(@Valid @RequestBody AuthUserRequest authenticationRequest, BindingResult result) throws UsernameAlreadyExists {
+        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest, result));
     }
 
     @PostMapping("/register")
@@ -32,14 +32,28 @@ public class AuthController {
         return ResponseEntity.ok(userService.save(userRequest, result));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GetUserResponse> getUser(@PathVariable(name = "id") String id) throws UserNotFoundException {
-        return ResponseEntity.ok(userService.getUser(id));
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        jwtUtils.addToBlackList(extractTokenFromHeader(request));
+        return ResponseEntity.ok("Logout successful");
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable(name = "userId") String userId) throws UserNotFoundException {
-        userService.deleteUser(userId);
+    @GetMapping("/{id}")
+    public ResponseEntity<GetUserResponse> get(@PathVariable(name = "id") String id) throws UserNotFoundException {
+        return ResponseEntity.ok(userService.get(id));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable(name = "id") String id) throws UserNotFoundException {
+        userService.deleteUser(id);
         return ResponseEntity.ok().build();
+    }
+
+    private String extractTokenFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

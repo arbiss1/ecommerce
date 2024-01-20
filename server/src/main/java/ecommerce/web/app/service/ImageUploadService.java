@@ -3,6 +3,7 @@ package ecommerce.web.app.service;
 import ecommerce.web.app.entities.ImageUpload;
 import ecommerce.web.app.entities.Post;
 import ecommerce.web.app.repository.ImageUploadRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class ImageUploadService {
         return imageUploadRepository.findAllByPost(post);
     }
 
+    @Transactional
     public void deleteImages(Post post){
         imageUploadRepository.deleteAllByPost(post);
     }

@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
@@ -33,7 +35,7 @@ public class UserService {
     PasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private final Locale locale = Locale.ENGLISH;
 
-    public GetUserResponse getUser(String userId) throws UserNotFoundException {
+    public GetUserResponse get(String userId) throws UserNotFoundException {
         Optional<User> findUser = userRepository.findById(userId);
         if(findUser.isEmpty()){
             throw new UserNotFoundException(
@@ -87,6 +89,24 @@ public class UserService {
         return new UserResponse(userRepository.save(user).getId());
     }
 
+    public User getAuthenticatedUser() throws UserNotFoundException, AuthenticationException {
+        UserDetails userDetails;
+        try{
+            userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+        }catch (Exception e){
+            throw new AuthenticationException(
+                    messageByLocale.getMessage(
+                            "error.401.auth", null, locale));
+        }
+
+        String username = userDetails.getUsername();
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(messageByLocale.getMessage(
+                "error.404.userNotFound", null, locale)
+        ));
+    }
+
     public User mapUser(UserRequest userRequest){
         return new User(
                 userRequest.getUsername(),
@@ -101,15 +121,4 @@ public class UserService {
                 "USER"
         );
     }
-
-    public User getAuthenticatedUser() throws UserNotFoundException {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        String username = userDetails.getUsername();
-        return userRepository.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(messageByLocale.getMessage(
-                "error.404.userNotFound", null, locale)
-        ));
-    }
-
 }

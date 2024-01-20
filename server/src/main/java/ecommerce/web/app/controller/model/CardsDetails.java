@@ -8,6 +8,5 @@ import lombok.Data;
 public class CardsDetails {
     private String id;
     private String postId;
-
     private String totalPrice;
 }

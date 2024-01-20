@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +23,8 @@ public class JwtUtils {
     private String secretKey;
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
+
+    private final Set<String> tokenBlacklist = new HashSet<>();
 
     public String generateToken(UserDetails user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
@@ -54,5 +58,22 @@ public class JwtUtils {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public boolean isValidToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return isBlackListed(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void addToBlackList(String token) {
+        tokenBlacklist.add(token);
+    }
+
+    public boolean isBlackListed(String token) {
+        return !tokenBlacklist.contains(token);
     }
 }

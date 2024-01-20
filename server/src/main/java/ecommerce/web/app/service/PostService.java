@@ -4,18 +4,15 @@ import ecommerce.web.app.controller.enums.PostStatus;
 import ecommerce.web.app.controller.model.PostResponse;
 import ecommerce.web.app.controller.model.PostDetails;
 import ecommerce.web.app.controller.model.PostRequest;
+import ecommerce.web.app.controller.model.SearchBuilderRequest;
 import ecommerce.web.app.enums.AdvertIndex;
 import ecommerce.web.app.exceptions.PostCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
-import ecommerce.web.app.repository.CategoryRepository;
 import ecommerce.web.app.repository.PostRepository;
-import ecommerce.web.app.repository.SubcategoryRepository;
 import ecommerce.web.app.entities.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,9 +23,8 @@ import java.util.stream.Collectors;
 public class PostService {
 
     public final PostRepository postRepository;
+    public final SearchService searchService;
     public final MessageSource messageByLocale;
-    public final CategoryRepository categoryRepository;
-    public final SubcategoryRepository subcategoryRepository;
     public final ImageUploadService imageUploadService;
     private final Locale locale = Locale.ENGLISH;
 
@@ -72,8 +68,6 @@ public class PostService {
             editablePost.setPrice(postRequest.getPrice());
             editablePost.setDescription(postRequest.getDescription());
             editablePost.setCurrency(postRequest.getCurrency().mapToStatus());
-            editablePost.setCategory(postRequest.getCategory());
-            editablePost.setSubcategory(postRequest.getSubCategory());
             editablePost.setTitle(postRequest.getTitle());
             editablePost.setModifiedBy(authUser.getUsername());
             editablePost.setModifiedAt(LocalDateTime.now());
@@ -106,13 +100,11 @@ public class PostService {
        return mapToPostDetails(response);
     }
 
-    public List<PostDetails> search(String keyword) throws PostCustomException {
-        if (keyword.equals("") || keyword.equals(" ")) {
-            throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound", null, locale)
-            );
+    public List<PostDetails> search(SearchBuilderRequest searchBuilderRequest) throws PostCustomException {
+        if (searchBuilderRequest == null) {
+            return mapToPostDetails(postRepository.findAll());
         }
-        List<Post> response = postRepository.searchPosts(keyword);
+        List<Post> response = searchService.searchPosts(searchBuilderRequest);
         if (response.isEmpty()) {
             throw new PostCustomException(
                     messageByLocale.getMessage("error.404.postNotFound", null, locale));
@@ -137,34 +129,32 @@ public class PostService {
         Post findPost = postRepository.findById(postId).orElseThrow(() ->
                 new PostCustomException(
                         messageByLocale.getMessage("error.404.postNotFound", null, locale)));
-        postRepository.deleteById(findPost.getId());
         imageUploadService.deleteImages(findPost);
+        postRepository.deleteById(findPost.getId());
     }
 
     private Post mapToPost(PostRequest postRequest, User getAuthenticatedUser){
-
         Post post = new Post();
         post.setUser(getAuthenticatedUser);
-        post.setAddress(getAuthenticatedUser.getAddress());
-        post.setFirstName(getAuthenticatedUser.getFirstName());
-        post.setLastName(getAuthenticatedUser.getLastName());
-        post.setPhoneNumber(getAuthenticatedUser.getPhoneNumber());
-        post.setCity(getAuthenticatedUser.getCity());
-        post.setCountry(getAuthenticatedUser.getCountry());
         post.setCreatedAt(LocalDateTime.now());
         post.setCreatedBy(getAuthenticatedUser.getUsername());
         post.setModifiedBy(getAuthenticatedUser.getUsername());
         post.setModifiedAt(LocalDateTime.now());
         post.setStatus(PostStatus.PENDING.mapToStatus());
-        post.setPostAdvertIndex(postRequest.getAdvertIndex() != null ? postRequest.getAdvertIndex().mapToStatus() : AdvertIndex.FREE);
+        post.setPostAdvertIndex(postRequest.getPostAdvertIndex() != null ? postRequest.getPostAdvertIndex().mapToStatus() : AdvertIndex.FREE);
         post.setCurrency(postRequest.getCurrency().mapToStatus());
-        post.setCategory(postRequest.getCategory());
         post.setDescription(postRequest.getDescription());
         post.setPrice(postRequest.getPrice());
         post.setTitle(postRequest.getTitle());
-        post.setSlug(postRequest.getSlug());
-        post.setInSale(postRequest.isInSale());
-        post.setSubcategory(postRequest.getSubCategory());
+        post.setBrand(postRequest.getBrand());
+        post.setEngineSize(postRequest.getEngineSize());
+        post.setFirstRegistration(postRequest.getFirstRegistration());
+        post.setFuel(postRequest.getFuel());
+        post.setColor(postRequest.getColor());
+        post.setKilometers(postRequest.getKilometers());
+        post.setPower(postRequest.getPower());
+        post.setTransmission(postRequest.getTransmission());
+        post.setType(postRequest.getType());
         return post;
     }
 
@@ -173,9 +163,7 @@ public class PostService {
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),
-                post.getPrice(),
-                post.getCategory(),
-                post.getSubcategory()
+                post.getPrice()
         )).collect(Collectors.toList());
     }
 

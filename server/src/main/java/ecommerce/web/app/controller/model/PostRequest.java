@@ -1,36 +1,46 @@
 package ecommerce.web.app.controller.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import ecommerce.web.app.enums.PostType;
 import ecommerce.web.app.controller.enums.AdvertIndex;
 import ecommerce.web.app.controller.enums.Currency;
-import ecommerce.web.app.entities.Category;
-import ecommerce.web.app.entities.ImageUpload;
-import ecommerce.web.app.entities.Subcategory;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
-
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
 public class PostRequest {
-
-    @JsonProperty("title")
+    @NotEmpty(message = "Title must not be empty")
     private String title;
-    @JsonProperty("description")
+    @NotEmpty(message = "Description must not be empty")
     private String description;
-    @JsonProperty("price")
-    private String price;
-    @JsonProperty("isInSale")
-    private boolean isInSale;
-    @JsonProperty("slug")
-    private String slug;
-    @JsonProperty("currency")
+    private PostType postType;
+    @Enumerated(EnumType.STRING)
     private Currency currency = Currency.ALL;
-    @JsonProperty("advertIndex")
-    private AdvertIndex advertIndex = AdvertIndex.FREE;
-    @JsonProperty("category")
-    private Category category;
-    @JsonProperty("subCategory")
-    private List<Subcategory> subCategory;
-    @JsonProperty("imageUrls")
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Advert Index must not be empty")
+    private AdvertIndex postAdvertIndex = AdvertIndex.FREE;
+    @NotEmpty(message = "Car type must not be empty")
+    private String type;
+    @NotEmpty(message = "Brand must not be empty")
+    private String brand;
+    @NotEmpty(message = "Color must not be empty")
+    private String color;
+    @NotEmpty(message = "Transmission must not be empty")
+    private String transmission;
+    @NotEmpty(message = "Kilometers must not be empty")
+    private String kilometers;
+    @NotEmpty(message = "Fuel must not be empty")
+    private String fuel;
+    @NotEmpty(message = "Power must not be empty")
+    private String power;
+    @NotEmpty(message = "Price must not be empty")
+    private String price;
+    @NotEmpty(message = "First registration must not be empty")
+    private String firstRegistration;
+    @NotEmpty(message = "Engine size must not be empty")
+    private String engineSize;
     private List<String> imageUrls;
 }

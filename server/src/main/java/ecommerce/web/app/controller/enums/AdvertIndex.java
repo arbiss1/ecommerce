@@ -1,18 +1,18 @@
 package ecommerce.web.app.controller.enums;
 
 
-public enum AdvertIndex{
+public enum AdvertIndex {
     FREE,
-    LOW_PLAN,
-    HIGH_PLAN;
+    MEDIUM,
+    HIGH;
 
     public ecommerce.web.app.enums.AdvertIndex mapToStatus(){
         if(this == AdvertIndex.FREE){
             return ecommerce.web.app.enums.AdvertIndex.FREE;
-        } else if(this == AdvertIndex.HIGH_PLAN){
-            return ecommerce.web.app.enums.AdvertIndex.HIGH_PLAN;
+        } else if(this == AdvertIndex.HIGH){
+            return ecommerce.web.app.enums.AdvertIndex.HIGH;
         } else {
-            return ecommerce.web.app.enums.AdvertIndex.LOW_PLAN;
+            return ecommerce.web.app.enums.AdvertIndex.MEDIUM;
         }
     }
 }

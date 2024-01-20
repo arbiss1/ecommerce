@@ -51,7 +51,7 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 		http.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeRequests().requestMatchers("/**").permitAll();
+				.authorizeRequests().requestMatchers("/api/**").permitAll();
 
 		http.authenticationProvider(authenticationProvider());
 

@@ -4,38 +4,38 @@ import ecommerce.web.app.controller.model.FavoritesDetails;
 import ecommerce.web.app.exceptions.FavoritesCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.FavoritesService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.AuthenticationException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/favorites")
+@RequiredArgsConstructor
 public class FavoritesController {
-
     public final FavoritesService favoritesService;
 
-    public FavoritesController(FavoritesService favoritesService){
-        this.favoritesService = favoritesService;
-    }
-
-    @GetMapping("/favorites")
-    public ResponseEntity<List<FavoritesDetails>> showFavorites() throws FavoritesCustomException, UserNotFoundException {
+    @GetMapping()
+    public ResponseEntity<List<FavoritesDetails>> show() throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
             return ResponseEntity.ok(favoritesService.findFavoritesByUser());
     }
 
-    @GetMapping("/favorites/search")
-    public ResponseEntity<List<FavoritesDetails>> searchWishlist(@RequestParam String keyword) throws FavoritesCustomException {
-            return ResponseEntity.ok(favoritesService.searchWishlist(keyword));
+    @GetMapping("/search")
+    public ResponseEntity<List<FavoritesDetails>> search(@RequestParam String keyword) throws FavoritesCustomException {
+            return ResponseEntity.ok(favoritesService.search(keyword));
     }
 
-    @PostMapping("/favorites/add/{postId}")
+    @PostMapping("/add/{postId}")
     public ResponseEntity<String> addToFavorites(@PathVariable(name = "postId") String postId) throws FavoritesCustomException, UserNotFoundException {
-            return ResponseEntity.ok(favoritesService.addToFavorites(postId));
+            return ResponseEntity.ok(favoritesService.add(postId));
     }
 
-    @DeleteMapping("/favorites/remove/{favoritesId}")
-    public ResponseEntity<Void> removeFromFavorites(@PathVariable(name = "favoritesId") String favoritesId) throws FavoritesCustomException {
-            favoritesService.deleteFavorites(favoritesId);
+    @DeleteMapping("/remove/{favoritesId}")
+    public ResponseEntity<Void> remove(@PathVariable(name = "favoritesId") String favoritesId) throws FavoritesCustomException {
+            favoritesService.remove(favoritesId);
             return ResponseEntity.ok().build();
     }
 }

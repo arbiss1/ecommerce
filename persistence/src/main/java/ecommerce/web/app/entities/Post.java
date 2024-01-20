@@ -1,56 +1,54 @@
 package ecommerce.web.app.entities;
 
-import ecommerce.web.app.enums.AdvertIndex;
-import ecommerce.web.app.enums.Currency;
-import ecommerce.web.app.enums.PostStatus;
+import ecommerce.web.app.enums.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.List;
+import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "post")
 @Data
-public class Post extends BaseEntity {
-
-    @NotEmpty(message = "Title must not be empty")
+@ToString
+public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     private String title;
-    @NotEmpty(message = "Description must not be empty")
     private String description;
-    @NotEmpty(message = "Price must not be empty")
-    private String price;
-    private boolean isInSale;
-    private String slug;
+    private PostType postType;
     @Enumerated(EnumType.STRING)
     private Currency currency;
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Advert Index must not be empty")
     private AdvertIndex postAdvertIndex;
-    @NotBlank(message = "Address must not be null")
-    private String address;
-    @NotBlank(message = "Phone number must not be null")
-    private String phoneNumber;
-    @NotBlank(message = "First name must not be null")
-    private String firstName;
-    @NotBlank(message = "Last name must not be null")
-    private String lastName;
-    private String country;
-    private String city;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    private String type;
+    private String brand;
+    private String color;
+    private String transmission;
+    private String kilometers;
+    private String fuel;
+    private String power;
+    private String price;
+    private String firstRegistration;
+    private String engineSize;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private User user;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Category category;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "subcategories_mapped_list")
-    private List<Subcategory> subcategory;
     @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private PostStatus status;
+    @CreatedDate
+    private LocalDateTime createdAt;
+    @CreatedBy
+    private String createdBy;
+    @LastModifiedDate
+    private LocalDateTime modifiedAt;
+    @LastModifiedBy
+    private String modifiedBy;
 }

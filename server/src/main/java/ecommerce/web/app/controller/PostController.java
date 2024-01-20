@@ -3,14 +3,17 @@ package ecommerce.web.app.controller;
 import ecommerce.web.app.controller.model.PostResponse;
 import ecommerce.web.app.controller.model.PostDetails;
 import ecommerce.web.app.controller.model.PostRequest;
+import ecommerce.web.app.controller.model.SearchBuilderRequest;
 import ecommerce.web.app.exceptions.PostCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
-import org.springframework.context.MessageSource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.AuthenticationException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -19,20 +22,13 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/post")
+@RequiredArgsConstructor
 public class PostController {
-
     public final UserService userService;
     public final PostService postService;
-    public final MessageSource messageByLocale;
-
-    public PostController(UserService userService, PostService postService, MessageSource messageByLocale) {
-        this.userService = userService;
-        this.postService = postService;
-        this.messageByLocale = messageByLocale;
-    }
 
     @PostMapping("/create")
-    public ResponseEntity<PostResponse> create(@Valid @RequestBody PostRequest postRequest, BindingResult result) throws UserNotFoundException {
+    public ResponseEntity<PostResponse> create(@Valid @RequestBody PostRequest postRequest, BindingResult result) throws UserNotFoundException, AuthenticationException {
             return ResponseEntity.ok(postService.save(postRequest, userService.getAuthenticatedUser(), postRequest.getImageUrls(), result));
     }
 
@@ -46,18 +42,18 @@ public class PostController {
             return ResponseEntity.ok(postService.findAll());
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<PostDetails>> search(@RequestParam @NotEmpty @NotBlank String keyword) throws PostCustomException {
-            return ResponseEntity.ok(postService.search(keyword));
+    @PostMapping("/search")
+    public ResponseEntity<List<PostDetails>> search(@RequestBody SearchBuilderRequest searchBuilderRequest) throws PostCustomException {
+            return ResponseEntity.ok(postService.search(searchBuilderRequest));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<PostDetails>> listByUser() throws PostCustomException, UserNotFoundException {
+    public ResponseEntity<List<PostDetails>> listByUser() throws PostCustomException, UserNotFoundException, AuthenticationException {
             return ResponseEntity.ok(postService.findByAuthenticatedUser(userService.getAuthenticatedUser().getId()));
     }
 
     @PutMapping("/edit/{postId}")
-    public ResponseEntity<PostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException {
+    public ResponseEntity<PostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException, AuthenticationException {
             return ResponseEntity.ok(postService.edit(postId, postRequest, userService.getAuthenticatedUser(), result));
     }
 

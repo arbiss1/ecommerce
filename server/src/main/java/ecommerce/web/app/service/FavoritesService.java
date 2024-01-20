@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,7 @@ public class FavoritesService {
         this.userService = userService;
     }
 
-    public String addToFavorites(String postId) throws FavoritesCustomException {
+    public String add(String postId) throws FavoritesCustomException {
         Optional<Post> optionalPost =  postService.findByPostId(postId);
         if(optionalPost.isEmpty()){
             throw new FavoritesCustomException(
@@ -48,7 +49,7 @@ public class FavoritesService {
         return favoritesRepository.save(favorites).getId();
     }
     @Transactional
-    public void deleteFavorites(String favoritesId) throws FavoritesCustomException {
+    public void remove(String favoritesId) throws FavoritesCustomException {
         Optional<Favorites> findIfFavoriteExists = favoritesRepository.findById(favoritesId);
         if(findIfFavoriteExists.isEmpty()){
             throw new FavoritesCustomException(
@@ -57,7 +58,7 @@ public class FavoritesService {
         favoritesRepository.deleteById(favoritesId);
     }
 
-    public List<FavoritesDetails> findFavoritesByUser() throws FavoritesCustomException, UserNotFoundException {
+    public List<FavoritesDetails> findFavoritesByUser() throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
         List<Favorites> response = favoritesRepository.findFavoritesByUser(userService.getAuthenticatedUser());
         if(response.isEmpty()){
             throw new FavoritesCustomException(
@@ -66,7 +67,7 @@ public class FavoritesService {
         return mapToFavoritesDetails(response);
     }
 
-    public List<FavoritesDetails> searchWishlist(String keyword) throws FavoritesCustomException {
+    public List<FavoritesDetails> search(String keyword) throws FavoritesCustomException {
         if(keyword.equals("") || keyword.equals(" ")){
             throw new FavoritesCustomException(
                     messageByLocale.getMessage("error.404.postNotFound",null,locale));
