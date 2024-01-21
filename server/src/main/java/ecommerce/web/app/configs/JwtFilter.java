@@ -46,11 +46,6 @@ public class JwtFilter extends OncePerRequestFilter {
                     }
                 }
                 filterChain.doFilter(request, response);
-//            if (StringUtils.hasText(jwt) && jwtUtils.isValidToken(jwt) && jwtUtils.isBlackListed(jwt)) {
-//                filterChain.doFilter(request, response);
-//            } else {
-//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            }
         } catch (JwtException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("User is not logged in!");

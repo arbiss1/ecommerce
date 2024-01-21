@@ -54,7 +54,8 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 				.authorizeRequests()
 				.requestMatchers("/api/**").permitAll()
 				.requestMatchers("/**").permitAll()
-				.anyRequest().permitAll();
+				.anyRequest().permitAll()
+				.and().logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer.clearAuthentication(true));
 
 		http.authenticationProvider(authenticationProvider());
 

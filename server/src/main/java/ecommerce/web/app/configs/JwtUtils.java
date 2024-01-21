@@ -1,8 +1,6 @@
 package ecommerce.web.app.configs;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashSet;
@@ -60,12 +59,18 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public boolean isValidToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return isBlackListed(token);
-        } catch (Exception e) {
-            return false;
+    public String invalidateToken(String token) throws AuthenticationException {
+        if(token != null) {
+            try {
+                Jwts.parserBuilder().setSigningKey(getSignInKey());
+                return Jwts.builder()
+                        .setExpiration(new Date(0))
+                        .compact();
+            } catch (Exception e) {
+                return "Token invalidated";
+            }
+        } else {
+            throw new AuthenticationException("No token provided");
         }
     }
 

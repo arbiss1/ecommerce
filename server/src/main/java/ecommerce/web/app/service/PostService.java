@@ -28,14 +28,8 @@ public class PostService {
     public final ImageUploadService imageUploadService;
     private final Locale locale = Locale.ENGLISH;
 
-    public void postImageUpload(List<ImageUpload> imageUploads){
-        for (ImageUpload imageUpload : imageUploads) {
-            imageUploadService.saveImage(imageUpload);
-        }
-    }
-
     public PostResponse save(PostRequest postRequest, User userAuth, List<String> postsImageUrls, BindingResult result
-    ) throws UserNotFoundException {
+    ) throws UserNotFoundException, PostCustomException {
         if (result.hasErrors()) {
             throw new UserNotFoundException(
                     messageByLocale.getMessage(
@@ -44,14 +38,7 @@ public class PostService {
             );
         }
         Post post = postRepository.save(mapToPost(postRequest, userAuth));
-        List<ImageUpload> imageUploads = new ArrayList<>();
-        for (String postsImageUrl : postsImageUrls) {
-            ImageUpload imageUpload = new ImageUpload();
-            imageUpload.setPost(post);
-            imageUpload.setProfileImage(postsImageUrl);
-            imageUploads.add(imageUpload);
-        }
-        postImageUpload(imageUploads);
+        imageUploadService.postImageUpload(postsImageUrls, post);
         return new PostResponse(post.getId());
     }
 
@@ -155,6 +142,7 @@ public class PostService {
         post.setPower(postRequest.getPower());
         post.setTransmission(postRequest.getTransmission());
         post.setType(postRequest.getType());
+        post.setPostType(postRequest.getPostType());
         return post;
     }
 

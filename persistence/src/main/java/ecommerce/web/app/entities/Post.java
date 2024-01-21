@@ -2,7 +2,6 @@ package ecommerce.web.app.entities;
 
 import ecommerce.web.app.enums.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
@@ -37,8 +36,8 @@ public class Post {
     private String price;
     private String firstRegistration;
     private String engineSize;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
     private User user;
     @Column(name = "post_status")
     @Enumerated(EnumType.STRING)

@@ -3,7 +3,6 @@ package ecommerce.web.app.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;

@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.AuthenticationException;
 import javax.validation.Valid;
 
 @RestController
@@ -33,11 +35,11 @@ public class AuthController {
         return ResponseEntity.ok(userService.save(userRequest, result));
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<String> logout(HttpServletRequest request) {
-//        jwtUtils.addToBlackList(extractTokenFromHeader(request));
-//        return ResponseEntity.ok("Logout successful");
-//    }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) throws AuthenticationException {
+        String jwtToken = extractTokenFromHeader(request);
+        return ResponseEntity.ok(jwtUtils.invalidateToken(jwtToken));
+    }
 
     @GetMapping()
     public ResponseEntity<GetUserResponse> get() throws UserNotFoundException {
