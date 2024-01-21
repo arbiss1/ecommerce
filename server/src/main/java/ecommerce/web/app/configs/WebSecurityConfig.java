@@ -51,7 +51,10 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 		http.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeRequests().requestMatchers("/api/**").permitAll();
+				.authorizeRequests()
+				.requestMatchers("/api/**").permitAll()
+				.requestMatchers("/**").permitAll()
+				.anyRequest().permitAll();
 
 		http.authenticationProvider(authenticationProvider());
 
@@ -67,7 +70,7 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
 								.requestMatchers("/api/**").permitAll() // Secure all API endpoints
-								.requestMatchers("/event/findAll").permitAll() // Exclude this specific endpoint
+								.requestMatchers("/**").permitAll() // Exclude this specific endpoint
 								.anyRequest().permitAll() // Require authentication for all other requests
 				)
 				.csrf().disable()

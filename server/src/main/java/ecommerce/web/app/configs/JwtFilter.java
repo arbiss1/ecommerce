@@ -32,7 +32,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 username = jwtUtils.getSubject(jwt);
             }
 
-            if (StringUtils.hasText(jwt) && jwtUtils.isValidToken(jwt) && jwtUtils.isBlackListed(jwt)) {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     User user = userService.getByUsername(username);
@@ -47,9 +46,11 @@ public class JwtFilter extends OncePerRequestFilter {
                     }
                 }
                 filterChain.doFilter(request, response);
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
+//            if (StringUtils.hasText(jwt) && jwtUtils.isValidToken(jwt) && jwtUtils.isBlackListed(jwt)) {
+//                filterChain.doFilter(request, response);
+//            } else {
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            }
         } catch (JwtException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write("User is not logged in!");

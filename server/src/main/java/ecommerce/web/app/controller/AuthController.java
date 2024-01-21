@@ -33,11 +33,11 @@ public class AuthController {
         return ResponseEntity.ok(userService.save(userRequest, result));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-        jwtUtils.addToBlackList(extractTokenFromHeader(request));
-        return ResponseEntity.ok("Logout successful");
-    }
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(HttpServletRequest request) {
+//        jwtUtils.addToBlackList(extractTokenFromHeader(request));
+//        return ResponseEntity.ok("Logout successful");
+//    }
 
     @GetMapping()
     public ResponseEntity<GetUserResponse> get() throws UserNotFoundException {
