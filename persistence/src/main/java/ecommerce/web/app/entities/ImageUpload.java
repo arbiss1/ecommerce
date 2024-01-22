@@ -21,7 +21,7 @@ public class ImageUpload {
     @Lob
     @Column(name = "profile_image", columnDefinition = "MEDIUMBLOB")
     private byte[] profileImage;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "post_id")
     private Post post;
     @CreatedDate
