@@ -36,9 +36,10 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) throws AuthenticationException {
+    public ResponseEntity<Void> logout(HttpServletRequest request) throws AuthenticationException {
         String jwtToken = extractTokenFromHeader(request);
-        return ResponseEntity.ok(jwtUtils.invalidateToken(jwtToken));
+        jwtUtils.invalidateToken(jwtToken);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping()

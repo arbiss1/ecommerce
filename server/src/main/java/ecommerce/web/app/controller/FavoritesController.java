@@ -4,7 +4,6 @@ import ecommerce.web.app.controller.model.FavoritesDetails;
 import ecommerce.web.app.exceptions.FavoritesCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.FavoritesService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -2,26 +2,27 @@ package ecommerce.web.app.service;
 
 import ecommerce.web.app.entities.ImageUpload;
 import ecommerce.web.app.entities.Post;
-import ecommerce.web.app.exceptions.PostCustomException;
+import ecommerce.web.app.exceptions.ImageCustomException;
 import ecommerce.web.app.repository.ImageUploadRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 
 @Service
+@RequiredArgsConstructor
 public class ImageUploadService {
 
     public final ImageUploadRepository imageUploadRepository;
+    public final MessageSource messageSource;
+    private final Locale locale = Locale.ENGLISH;
 
-    public ImageUploadService(ImageUploadRepository imageUploadRepository){
-        this.imageUploadRepository = imageUploadRepository;
-    }
-
-    public void postImageUpload(List<String> imageUploads, Post post) throws PostCustomException {
-        if(isValidBase64String(imageUploads)) {
+    public void postImageUpload(List<String> imageUploads, Post post) throws ImageCustomException {
+        if (isValidBase64String(imageUploads)) {
             for (String postsImageUrl : imageUploads) {
                 ImageUpload imageUpload = new ImageUpload();
                 imageUpload.setPost(post);
@@ -29,20 +30,12 @@ public class ImageUploadService {
                 imageUploadRepository.save(imageUpload);
             }
         } else {
-            throw new PostCustomException("Image urls does not look like base64");
+            throw new ImageCustomException(messageSource.getMessage("error.409.imageNotBase64", null, locale));
         }
     }
 
-    public void deleteImageUploaded(String id){
-        imageUploadRepository.deleteById(id);
-    }
-
-    public List<ImageUpload> getListsOfImageByPost(Post post){
-        return imageUploadRepository.findAllByPost(post);
-    }
-
     @Transactional
-    public void deleteImages(Post post){
+    public void deleteImages(Post post) {
         imageUploadRepository.deleteAllByPost(post);
     }
 

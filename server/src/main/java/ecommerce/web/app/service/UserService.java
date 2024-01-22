@@ -8,7 +8,6 @@ import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.exceptions.UsernameAlreadyExists;
 import ecommerce.web.app.repository.UserRepository;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -62,7 +61,9 @@ public class UserService {
     }
 
     public void deleteUser(String userId) throws UserNotFoundException{
-        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(messageByLocale.getMessage(
+                "error.404.userNotFound", null, locale)
+        ));
         userRepository.deleteById(findUser.getId());
     }
 

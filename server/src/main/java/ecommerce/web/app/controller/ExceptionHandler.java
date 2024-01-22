@@ -18,6 +18,11 @@ public class ExceptionHandler {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(BindigException.class)
+    public ResponseEntity<ApiError> handleBindigException(BindigException ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleUnauthorized(AuthenticationException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED,ex.getMessage(),ex));
@@ -31,6 +36,11 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(PostCustomException.class)
     public ResponseEntity<ApiError> handlePostCustomException(PostCustomException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND,ex.getMessage(),ex));
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(ImageCustomException.class)
+    public ResponseEntity<ApiError> handleImageCustomException(ImageCustomException ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(FavoritesCustomException.class)

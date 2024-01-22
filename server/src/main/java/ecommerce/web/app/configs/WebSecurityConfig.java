@@ -1,5 +1,6 @@
 package ecommerce.web.app.configs;
 
+import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -50,12 +51,16 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeRequests()
 				.requestMatchers("/api/**").permitAll()
 				.requestMatchers("/**").permitAll()
 				.anyRequest().permitAll()
-				.and().logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer.clearAuthentication(true));
+				.and().logout(logout -> logout
+						.clearAuthentication(true)
+						.logoutUrl("/logout")
+						.invalidateHttpSession(true)
+						.deleteCookies("JSESSIONID"));
 
 		http.authenticationProvider(authenticationProvider());
 
@@ -70,13 +75,18 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 				.addFilterBefore(new JwtFilter((userService)), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
-								.requestMatchers("/api/**").permitAll() // Secure all API endpoints
-								.requestMatchers("/**").permitAll() // Exclude this specific endpoint
-								.anyRequest().permitAll() // Require authentication for all other requests
-				)
+								.requestMatchers("/api/**").permitAll()
+								.requestMatchers("/**").permitAll()
+								.anyRequest().permitAll()
+
+				).logout(logout -> logout
+						.clearAuthentication(true)
+						.logoutUrl("/logout")
+						.invalidateHttpSession(true)
+						.deleteCookies("JSESSIONID"))
 				.csrf().disable()
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider());
 	}
 }

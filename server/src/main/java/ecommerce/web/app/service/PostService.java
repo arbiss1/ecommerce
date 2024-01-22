@@ -6,6 +6,8 @@ import ecommerce.web.app.controller.model.PostDetails;
 import ecommerce.web.app.controller.model.PostRequest;
 import ecommerce.web.app.controller.model.SearchBuilderRequest;
 import ecommerce.web.app.enums.AdvertIndex;
+import ecommerce.web.app.exceptions.BindigException;
+import ecommerce.web.app.exceptions.ImageCustomException;
 import ecommerce.web.app.exceptions.PostCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.repository.PostRepository;
@@ -29,13 +31,9 @@ public class PostService {
     private final Locale locale = Locale.ENGLISH;
 
     public PostResponse save(PostRequest postRequest, User userAuth, List<String> postsImageUrls, BindingResult result
-    ) throws UserNotFoundException, PostCustomException {
+    ) throws BindigException, ImageCustomException {
         if (result.hasErrors()) {
-            throw new UserNotFoundException(
-                    messageByLocale.getMessage(
-                            result.getAllErrors().toString(), null, locale
-                    )
-            );
+            throw new BindigException(result.getAllErrors().toString());
         }
         Post post = postRepository.save(mapToPost(postRequest, userAuth));
         imageUploadService.postImageUpload(postsImageUrls, post);
@@ -43,11 +41,9 @@ public class PostService {
     }
 
     public PostResponse edit(String postId, PostRequest postRequest, User authUser, BindingResult result)
-            throws PostCustomException {
+            throws PostCustomException, BindigException {
         if (result.hasErrors()) {
-            throw new PostCustomException(
-                    messageByLocale.getMessage(result.getAllErrors().toString(), null, locale)
-            );
+            throw new BindigException(result.getAllErrors().toString());
         }
         Optional<Post> findPost = postRepository.findById(postId);
         if (findPost.isPresent()) {

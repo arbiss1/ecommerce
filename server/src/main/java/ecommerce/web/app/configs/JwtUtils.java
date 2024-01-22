@@ -1,29 +1,35 @@
 package ecommerce.web.app.configs;
 
+import ecommerce.web.app.entities.User;
+import ecommerce.web.app.exceptions.UserNotFoundException;
+import ecommerce.web.app.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class JwtUtils {
 
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
-
-    private final Set<String> tokenBlacklist = new HashSet<>();
 
     public String generateToken(UserDetails user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
@@ -59,26 +65,19 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String invalidateToken(String token) throws AuthenticationException {
+    public void invalidateToken(String token) throws AuthenticationException {
         if(token != null) {
-            try {
-                Jwts.parserBuilder().setSigningKey(getSignInKey());
-                return Jwts.builder()
-                        .setExpiration(new Date(0))
-                        .compact();
-            } catch (Exception e) {
-                return "Token invalidated";
-            }
+            Claims claims = Jwts.parser().setSigningKey(getSignInKey()).parseClaimsJws(token).getBody();
+
+            LocalDate oneDayBefore = convertToLocalDateViaSqlDate(claims.getExpiration()).minusDays(2);
+            Date oneDayBeforeAsDate = java.sql.Date.valueOf(oneDayBefore);
+            claims.setExpiration(oneDayBeforeAsDate);
         } else {
             throw new AuthenticationException("No token provided");
         }
     }
 
-    public void addToBlackList(String token) {
-        tokenBlacklist.add(token);
-    }
-
-    public boolean isBlackListed(String token) {
-        return !tokenBlacklist.contains(token);
+    public LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {
+        return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
     }
 }
