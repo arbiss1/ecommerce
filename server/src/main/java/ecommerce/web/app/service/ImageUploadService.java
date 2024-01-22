@@ -40,16 +40,16 @@ public class ImageUploadService {
     }
 
     public static boolean isValidBase64String(List<String> inputs) {
-        for (String input : inputs) {
-            try {
-                byte[] decodedBytes = Base64.getDecoder().decode(input);
-                String reencodedString = Base64.getEncoder().encodeToString(decodedBytes);
-                return input.equals(reencodedString);
-            } catch (IllegalArgumentException e) {
-                return false;
+            for (String input : inputs) {
+                try {
+                    byte[] decodedBytes = Base64.getDecoder().decode(input);
+                    String reencodedString = Base64.getEncoder().encodeToString(decodedBytes);
+                    return input.equals(reencodedString);
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
             }
-        }
-        return true;
+        return false;
     }
 }
 

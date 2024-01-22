@@ -36,7 +36,7 @@ public class PostService {
             throw new BindigException(result.getAllErrors().toString());
         }
         Post post = postRepository.save(mapToPost(postRequest, userAuth));
-        imageUploadService.postImageUpload(postsImageUrls, post);
+        if(postsImageUrls != null && !postsImageUrls.isEmpty()) imageUploadService.postImageUpload(postsImageUrls, post);
         return new PostResponse(post.getId());
     }
 

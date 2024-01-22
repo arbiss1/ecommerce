@@ -36,7 +36,7 @@ public class Post {
     private String price;
     private String firstRegistration;
     private String engineSize;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
     @Column(name = "post_status")
