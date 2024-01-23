@@ -1,6 +1,5 @@
 package ecommerce.web.app.configs;
 
-import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +13,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -27,6 +28,7 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 
 	private final AuthEntryPointJwt authEntryPointJwt;
 	private final UserService userService;
+	private final JwtUtils jwtUtils;
 	private final PasswordEncoder passwordEncoder;
 
 	@Bean
@@ -55,12 +57,7 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 				.authorizeRequests()
 				.requestMatchers("/api/**").permitAll()
 				.requestMatchers("/**").permitAll()
-				.anyRequest().permitAll()
-				.and().logout(logout -> logout
-						.clearAuthentication(true)
-						.logoutUrl("/logout")
-						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID"));
+				.anyRequest().permitAll();
 
 		http.authenticationProvider(authenticationProvider());
 
@@ -72,21 +69,26 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http
-				.addFilterBefore(new JwtFilter((userService)), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new JwtFilter(userService), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
 								.requestMatchers("/api/**").permitAll()
 								.requestMatchers("/**").permitAll()
 								.anyRequest().permitAll()
-
-				).logout(logout -> logout
-						.clearAuthentication(true)
-						.logoutUrl("/logout")
-						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID"))
+				)
 				.csrf().disable()
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
-//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+						.maximumSessions(1)
+						.expiredUrl("/api/user/authenticate")
+						.sessionRegistry(sessionRegistry())
+				)
 				.authenticationProvider(authenticationProvider());
+	}
+
+	@Bean
+	public SessionRegistry sessionRegistry() {
+		return new SessionRegistryImpl();
 	}
 }

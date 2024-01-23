@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -30,7 +28,9 @@ public class PostController {
     public final PostService postService;
 
     @PostMapping("/create")
-    public ResponseEntity<PostResponse> create(@Valid @RequestBody PostRequest postRequest, BindingResult result) throws UserNotFoundException, AuthenticationException, BindigException, ImageCustomException {
+    public ResponseEntity<PostResponse> create(
+            @Valid @RequestBody PostRequest postRequest, BindingResult result
+    ) throws UserNotFoundException, AuthenticationException, BindigException, ImageCustomException {
             return ResponseEntity.ok(postService.save(postRequest, userService.getAuthenticatedUser(), postRequest.getImageUrls(), result));
     }
 

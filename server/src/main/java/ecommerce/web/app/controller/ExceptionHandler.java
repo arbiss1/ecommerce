@@ -1,6 +1,7 @@
 package ecommerce.web.app.controller;
 
 import ecommerce.web.app.exceptions.*;
+import io.jsonwebtoken.JwtException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class ExceptionHandler {
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(BindigException.class)
-    public ResponseEntity<ApiError> handleBindigException(BindigException ex) {
+    public ResponseEntity<ApiError> handleBindingException(BindigException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 

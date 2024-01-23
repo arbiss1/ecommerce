@@ -1,5 +1,6 @@
 package ecommerce.web.app.controller;
 
+import ecommerce.web.app.configs.JwtFilter;
 import ecommerce.web.app.configs.JwtUtils;
 import ecommerce.web.app.controller.model.*;
 import ecommerce.web.app.exceptions.UserNotFoundException;
@@ -12,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.naming.AuthenticationException;
 import javax.validation.Valid;
 
 @RestController
@@ -36,9 +35,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) throws AuthenticationException {
-        String jwtToken = extractTokenFromHeader(request);
-        jwtUtils.invalidateToken(jwtToken);
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        jwtUtils.handleLogout(extractTokenFromHeader(request));
         return ResponseEntity.ok().build();
     }
 

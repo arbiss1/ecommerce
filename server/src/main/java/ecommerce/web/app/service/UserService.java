@@ -80,7 +80,7 @@ public class UserService {
         );
 
         if(findIfUserIsIdentified.isPresent()){
-            throw new UsernameAlreadyExists(messageByLocale.getMessage("error.409.userExists",null,locale));
+            throw new UsernameAlreadyExists(messageByLocale.getMessage("error.409.duplicatedInfo",null,locale));
         }
 
         User user = mapUser(userRequest);

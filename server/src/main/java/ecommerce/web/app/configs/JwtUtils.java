@@ -1,16 +1,11 @@
 package ecommerce.web.app.configs;
 
-import ecommerce.web.app.entities.User;
-import ecommerce.web.app.exceptions.UserNotFoundException;
-import ecommerce.web.app.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -65,16 +60,21 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public void invalidateToken(String token) throws AuthenticationException {
-        if(token != null) {
-            Claims claims = Jwts.parser().setSigningKey(getSignInKey()).parseClaimsJws(token).getBody();
+    private static final Set<String> blacklistedTokens = new HashSet<>();
 
-            LocalDate oneDayBefore = convertToLocalDateViaSqlDate(claims.getExpiration()).minusDays(2);
-            Date oneDayBeforeAsDate = java.sql.Date.valueOf(oneDayBefore);
-            claims.setExpiration(oneDayBeforeAsDate);
-        } else {
-            throw new AuthenticationException("No token provided");
+    public static void blacklistToken(String token) {
+        blacklistedTokens.add(token);
+    }
+
+    public static boolean isTokenBlacklisted(String token) throws AuthenticationException {
+        if(blacklistedTokens.contains(token)) {
+            throw new AuthenticationException("User is not logged in");
         }
+        return false;
+    }
+
+    public void handleLogout(String jwt) {
+        JwtUtils.blacklistToken(jwt);
     }
 
     public LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {

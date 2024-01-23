@@ -1,59 +1,58 @@
-//package ecommerce.web.app.configs;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import springfox.documentation.builders.ApiInfoBuilder;
-//import springfox.documentation.builders.PathSelectors;
-//import springfox.documentation.builders.RequestHandlerSelectors;
-//import springfox.documentation.service.ApiInfo;
-//import springfox.documentation.service.ApiKey;
-//import springfox.documentation.service.AuthorizationScope;
-//import springfox.documentation.service.SecurityReference;
-//import springfox.documentation.spi.DocumentationType;
-//import springfox.documentation.spi.service.contexts.SecurityContext;
-//import springfox.documentation.spring.web.plugins.Docket;
-//import springfox.documentation.swagger2.annotations.EnableSwagger2;
-//import java.util.Collections;
-//import java.util.List;
-//
-//@EnableSwagger2
-//@Configuration
-//public class SwaggerConfiguration {
-//
-//    public static final String AUTHORIZATION_HEADER = "Authorization";
-//
-//    @Bean
-//    public Docket productApi() {
-//        return new Docket(DocumentationType.OAS_30)
-//                .securityContexts(Collections.singletonList(securityContext()))
-//                .securitySchemes(Collections.singletonList(apiKey()))
-//                .select()
-//                .apis(RequestHandlerSelectors.basePackage("ecommerce.web.app.controller"))
-//                .paths(PathSelectors.any())
-//                .build()
-//                .apiInfo(metaInfo());
-//    }
-//
-//    private ApiInfo metaInfo() {
-//        return new ApiInfoBuilder()
-//                .description("Backend API For Ecommerce application Al-bli")
-//                .title("Al-bli API")
-//                .version("unreleased")
-//                .build();
-//    }
-//    public ApiKey apiKey() {
-//        return new ApiKey("JWT", AUTHORIZATION_HEADER, "header");
-//    }
-//
-//    public SecurityContext securityContext() {
-//        return SecurityContext.builder().securityReferences(defaultAuth()).build();
-//    }
-//
-//    private List<SecurityReference> defaultAuth() {
-//        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-//        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-//        authorizationScopes[0] = authorizationScope;
-//        return List.of(new SecurityReference("JWT", authorizationScopes));
-//    }
-//
-//}
+package ecommerce.web.app.configs;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.jetbrains.annotations.NotNull;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class SwaggerConfiguration {
+
+    @Bean
+    public GroupedOpenApi api() {
+        return GroupedOpenApi.builder()
+                .group("api")
+                .pathsToMatch("/**")
+                .build();
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info().title("Car application API").version("unreleased"))
+                .addSecurityItem(new SecurityRequirement().addList("JWT"));
+    }
+
+    @Bean
+    public SecurityScheme securityScheme() {
+        return new SecurityScheme()
+                .name("JWT")
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT");
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(@NotNull CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods(
+                                RequestMethod.GET.name(),
+                                RequestMethod.POST.name(),
+                                RequestMethod.PUT.name(),
+                                RequestMethod.DELETE.name()
+                        );
+            }
+        };
+    }
+}
+
