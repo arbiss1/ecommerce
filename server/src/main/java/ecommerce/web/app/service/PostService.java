@@ -9,7 +9,6 @@ import ecommerce.web.app.enums.AdvertIndex;
 import ecommerce.web.app.exceptions.BindigException;
 import ecommerce.web.app.exceptions.ImageCustomException;
 import ecommerce.web.app.exceptions.PostCustomException;
-import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.repository.PostRepository;
 import ecommerce.web.app.entities.*;
 import lombok.AllArgsConstructor;
@@ -74,34 +73,20 @@ public class PostService {
         return postRepository.save(findIfPostExist.get()).getId();
     }
 
-    public List<PostDetails> findAll() throws PostCustomException {
-        List<Post> response = postRepository.findAll();
-        if (response.isEmpty()) {
-            throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound", null, locale));
-        }
-       return mapToPostDetails(response);
+    public List<PostDetails> findAll() {
+       return mapToPostDetails(postRepository.findAll());
     }
 
-    public List<PostDetails> search(SearchBuilderRequest searchBuilderRequest) throws PostCustomException {
+    public List<PostDetails> search(SearchBuilderRequest searchBuilderRequest) {
         if (searchBuilderRequest == null) {
             return mapToPostDetails(postRepository.findAll());
         }
         List<Post> response = searchService.searchPosts(searchBuilderRequest);
-        if (response.isEmpty()) {
-            throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound", null, locale));
-        }
         return mapToPostDetails(response);
     }
 
-    public List<PostDetails> findByAuthenticatedUser(String userId) throws PostCustomException {
-        List<Post> response = postRepository.findByUserId(userId);
-        if (response.isEmpty()) {
-            throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound", null, locale));
-        }
-        return mapToPostDetails(response);
+    public List<PostDetails> listByUser(String userId) {
+        return mapToPostDetails(postRepository.findByUserId(userId));
     }
 
     public Optional<Post> findByPostId(String postId) {

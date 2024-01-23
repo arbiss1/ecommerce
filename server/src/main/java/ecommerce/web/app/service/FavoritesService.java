@@ -58,7 +58,7 @@ public class FavoritesService {
         favoritesRepository.deleteById(favoritesId);
     }
 
-    public List<FavoritesDetails> findFavoritesByUser() throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
+    public List<FavoritesDetails> show() throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
         List<Favorites> response = favoritesRepository.findFavoritesByUser(userService.getAuthenticatedUser());
         if(response.isEmpty()){
             throw new FavoritesCustomException(

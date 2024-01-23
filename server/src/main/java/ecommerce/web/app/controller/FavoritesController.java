@@ -20,7 +20,7 @@ public class FavoritesController {
 
     @GetMapping()
     public ResponseEntity<List<FavoritesDetails>> show() throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
-            return ResponseEntity.ok(favoritesService.findFavoritesByUser());
+            return ResponseEntity.ok(favoritesService.show());
     }
 
     @GetMapping("/search")
@@ -29,7 +29,7 @@ public class FavoritesController {
     }
 
     @PostMapping("/add/{postId}")
-    public ResponseEntity<String> addToFavorites(@PathVariable(name = "postId") String postId) throws FavoritesCustomException, UserNotFoundException {
+    public ResponseEntity<String> add(@PathVariable(name = "postId") String postId) throws FavoritesCustomException {
             return ResponseEntity.ok(favoritesService.add(postId));
     }
 

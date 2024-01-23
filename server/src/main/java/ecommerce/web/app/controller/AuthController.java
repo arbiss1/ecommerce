@@ -1,6 +1,5 @@
 package ecommerce.web.app.controller;
 
-import ecommerce.web.app.configs.JwtFilter;
 import ecommerce.web.app.configs.JwtUtils;
 import ecommerce.web.app.controller.model.*;
 import ecommerce.web.app.exceptions.UserNotFoundException;

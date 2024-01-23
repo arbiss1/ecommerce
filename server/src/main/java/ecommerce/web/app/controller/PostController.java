@@ -40,7 +40,7 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PostDetails>> list() throws PostCustomException {
+    public ResponseEntity<List<PostDetails>> list() {
             return ResponseEntity.ok(postService.findAll());
     }
 
@@ -50,8 +50,8 @@ public class PostController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<PostDetails>> listByUser() throws PostCustomException, UserNotFoundException, AuthenticationException {
-            return ResponseEntity.ok(postService.findByAuthenticatedUser(userService.getAuthenticatedUser().getId()));
+    public ResponseEntity<List<PostDetails>> listByUser() throws UserNotFoundException, AuthenticationException {
+            return ResponseEntity.ok(postService.listByUser(userService.getAuthenticatedUser().getId()));
     }
 
     @PutMapping("/edit/{postId}")
