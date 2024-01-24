@@ -28,10 +28,13 @@ public class Post {
     private AdvertIndex postAdvertIndex;
     private String type;
     private String brand;
+    private String model;
     private String color;
-    private String transmission;
+    @Enumerated(EnumType.STRING)
+    private Transmission transmission;
     private String kilometers;
-    private String fuel;
+    @Enumerated(EnumType.STRING)
+    private Fuel fuel;
     private String power;
     private String price;
     private String firstRegistration;

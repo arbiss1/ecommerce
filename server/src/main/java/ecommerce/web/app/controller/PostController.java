@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
-@CrossOrigin
+@CrossOrigin("*")
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostController {

@@ -1,8 +1,10 @@
 package ecommerce.web.app.controller.model;
 
+import ecommerce.web.app.enums.Fuel;
 import ecommerce.web.app.enums.PostType;
 import ecommerce.web.app.controller.enums.AdvertIndex;
 import ecommerce.web.app.controller.enums.Currency;
+import ecommerce.web.app.enums.Transmission;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
@@ -29,11 +31,11 @@ public class PostRequest {
     @NotEmpty(message = "Color must not be empty")
     private String color;
     @NotEmpty(message = "Transmission must not be empty")
-    private String transmission;
+    private Transmission transmission;
     @NotEmpty(message = "Kilometers must not be empty")
     private String kilometers;
     @NotEmpty(message = "Fuel must not be empty")
-    private String fuel;
+    private Fuel fuel;
     @NotEmpty(message = "Power must not be empty")
     private String power;
     @NotEmpty(message = "Price must not be empty")

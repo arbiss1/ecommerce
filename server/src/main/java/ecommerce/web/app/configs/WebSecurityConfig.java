@@ -28,7 +28,6 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 
 	private final AuthEntryPointJwt authEntryPointJwt;
 	private final UserService userService;
-	private final JwtUtils jwtUtils;
 	private final PasswordEncoder passwordEncoder;
 
 	@Bean

@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="server" />
         <module name="persistence" />
+        <module name="client" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -20,6 +21,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ECOMMERCE-back" options="-parameters" />
+      <module name="client" options="-parameters" />
       <module name="persistence" options="-parameters" />
       <module name="server" options="-parameters" />
       <module name="web-ecommerce" options="-parameters" />

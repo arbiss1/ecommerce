@@ -18,6 +18,7 @@
   <modules>
     <module>server</module>
     <module>persistence</module>
+    <module>client</module>
   </modules>
 
   <properties>
