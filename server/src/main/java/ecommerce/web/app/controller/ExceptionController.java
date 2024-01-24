@@ -44,6 +44,11 @@ public class ExceptionController {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleGeneralException(Exception ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR,ex.getMessage(),ex));
+    }
+
     @ExceptionHandler(FavoritesCustomException.class)
     public ResponseEntity<ApiError> handleFavoritesCustomException(FavoritesCustomException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
