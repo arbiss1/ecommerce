@@ -1,50 +1,50 @@
 package ecommerce.web.app.controller;
 
 import ecommerce.web.app.exceptions.*;
-import io.jsonwebtoken.JwtException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.naming.AuthenticationException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-public class ExceptionHandler {
+public class ExceptionController {
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(UsernameAlreadyExists.class)
+    @ExceptionHandler(UsernameAlreadyExists.class)
     public ResponseEntity<ApiError> handleUserAlreadyExists(UsernameAlreadyExists ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(BindigException.class)
-    public ResponseEntity<ApiError> handleBindingException(BindigException ex) {
+    @ExceptionHandler(BindingException.class)
+    public ResponseEntity<ApiError> handleBindingException(BindingException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleUnauthorized(AuthenticationException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.UNAUTHORIZED,ex.getMessage(),ex));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND,ex.getMessage(),ex));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(PostCustomException.class)
+    @ExceptionHandler(PostCustomException.class)
     public ResponseEntity<ApiError> handlePostCustomException(PostCustomException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND,ex.getMessage(),ex));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(ImageCustomException.class)
+    @ExceptionHandler(ImageCustomException.class)
     public ResponseEntity<ApiError> handleImageCustomException(ImageCustomException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(FavoritesCustomException.class)
+    @ExceptionHandler(FavoritesCustomException.class)
     public ResponseEntity<ApiError> handleFavoritesCustomException(FavoritesCustomException ex) {
         return buildResponseEntity(new ApiError(HttpStatus.CONFLICT,ex.getMessage(),ex));
     }

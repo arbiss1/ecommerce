@@ -4,12 +4,13 @@ import ecommerce.web.app.controller.model.PostResponse;
 import ecommerce.web.app.controller.model.PostDetails;
 import ecommerce.web.app.controller.model.PostRequest;
 import ecommerce.web.app.controller.model.SearchBuilderRequest;
-import ecommerce.web.app.exceptions.BindigException;
+import ecommerce.web.app.exceptions.BindingException;
 import ecommerce.web.app.exceptions.ImageCustomException;
 import ecommerce.web.app.exceptions.PostCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 @CrossOrigin
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class PostController {
     @PostMapping("/create")
     public ResponseEntity<PostResponse> create(
             @Valid @RequestBody PostRequest postRequest, BindingResult result
-    ) throws UserNotFoundException, AuthenticationException, BindigException, ImageCustomException {
+    ) throws UserNotFoundException, AuthenticationException, BindingException, ImageCustomException {
             return ResponseEntity.ok(postService.save(postRequest, userService.getAuthenticatedUser(), postRequest.getImageUrls(), result));
     }
 
@@ -45,7 +47,7 @@ public class PostController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<PostDetails>> search(@RequestBody SearchBuilderRequest searchBuilderRequest) throws PostCustomException {
+    public ResponseEntity<List<PostDetails>> search(@RequestBody SearchBuilderRequest searchBuilderRequest) {
             return ResponseEntity.ok(postService.search(searchBuilderRequest));
     }
 
@@ -55,7 +57,7 @@ public class PostController {
     }
 
     @PutMapping("/edit/{postId}")
-    public ResponseEntity<PostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException, AuthenticationException, BindigException {
+    public ResponseEntity<PostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException, AuthenticationException, BindingException {
             return ResponseEntity.ok(postService.edit(postId, postRequest, userService.getAuthenticatedUser(), result));
     }
 

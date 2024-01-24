@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
@@ -27,11 +28,19 @@ public class ImageUploadService {
                 ImageUpload imageUpload = new ImageUpload();
                 imageUpload.setPost(post);
                 imageUpload.setProfileImage(postsImageUrl);
+                imageUpload.setCreatedAt(LocalDateTime.now());
+                imageUpload.setModifiedAt(LocalDateTime.now());
+                imageUpload.setCreatedBy(post.getUser().getUsername());
+                imageUpload.setModifiedBy(post.getUser().getUsername());
                 imageUploadRepository.save(imageUpload);
             }
         } else {
             throw new ImageCustomException(messageSource.getMessage("error.409.imageNotBase64", null, locale));
         }
+    }
+
+    public List<ImageUpload> getImages(Post post){
+        return imageUploadRepository.findAllByPost(post);
     }
 
     @Transactional

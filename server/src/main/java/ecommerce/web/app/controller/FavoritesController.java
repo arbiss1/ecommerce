@@ -4,6 +4,7 @@ import ecommerce.web.app.controller.model.FavoritesDetails;
 import ecommerce.web.app.exceptions.FavoritesCustomException;
 import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.service.FavoritesService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import javax.naming.AuthenticationException;
 import java.util.List;
 
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping("/api/favorites")
 @RequiredArgsConstructor
 @CrossOrigin("*")

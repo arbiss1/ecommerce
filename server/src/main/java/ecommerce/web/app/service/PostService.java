@@ -6,7 +6,7 @@ import ecommerce.web.app.controller.model.PostDetails;
 import ecommerce.web.app.controller.model.PostRequest;
 import ecommerce.web.app.controller.model.SearchBuilderRequest;
 import ecommerce.web.app.enums.AdvertIndex;
-import ecommerce.web.app.exceptions.BindigException;
+import ecommerce.web.app.exceptions.BindingException;
 import ecommerce.web.app.exceptions.ImageCustomException;
 import ecommerce.web.app.exceptions.PostCustomException;
 import ecommerce.web.app.repository.PostRepository;
@@ -30,9 +30,9 @@ public class PostService {
     private final Locale locale = Locale.ENGLISH;
 
     public PostResponse save(PostRequest postRequest, User userAuth, List<String> postsImageUrls, BindingResult result
-    ) throws BindigException, ImageCustomException {
+    ) throws BindingException, ImageCustomException {
         if (result.hasErrors()) {
-            throw new BindigException(result.getAllErrors().toString());
+            throw new BindingException(result.getAllErrors().toString());
         }
         Post post = postRepository.save(mapToPost(postRequest, userAuth));
         if(postsImageUrls != null && !postsImageUrls.isEmpty()) imageUploadService.postImageUpload(postsImageUrls, post);
@@ -40,9 +40,9 @@ public class PostService {
     }
 
     public PostResponse edit(String postId, PostRequest postRequest, User authUser, BindingResult result)
-            throws PostCustomException, BindigException {
+            throws PostCustomException, BindingException {
         if (result.hasErrors()) {
-            throw new BindigException(result.getAllErrors().toString());
+            throw new BindingException(result.getAllErrors().toString());
         }
         Optional<Post> findPost = postRepository.findById(postId);
         if (findPost.isPresent()) {
@@ -74,7 +74,16 @@ public class PostService {
     }
 
     public List<PostDetails> findAll() {
-       return mapToPostDetails(postRepository.findAll());
+        List<PostDetails> postDetails = new ArrayList<>();
+        List<String> images = new ArrayList<>();
+        for (Post post : postRepository.findAll()) {
+            for (ImageUpload image : imageUploadService.getImages(post)) {
+                images.add(image.getProfileImage());
+            }
+            postDetails.add(mapToPostDetail(post, images));
+            images = new ArrayList<>();
+        }
+       return postDetails;
     }
 
     public List<PostDetails> search(SearchBuilderRequest searchBuilderRequest) {
@@ -134,6 +143,16 @@ public class PostService {
                 post.getDescription(),
                 post.getPrice()
         )).collect(Collectors.toList());
+    }
+
+    public PostDetails mapToPostDetail(Post post, List<String> images){
+        return new PostDetails(
+                post.getId(),
+                post.getTitle(),
+                post.getDescription(),
+                post.getPrice(),
+                images
+        );
     }
 
 }

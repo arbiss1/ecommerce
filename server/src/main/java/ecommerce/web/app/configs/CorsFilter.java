@@ -8,10 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author d.hidri
- *
- */
 @Order(1)
 @Component
 public class CorsFilter implements Filter {

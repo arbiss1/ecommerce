@@ -6,6 +6,7 @@ import ecommerce.web.app.exceptions.UserNotFoundException;
 import ecommerce.web.app.exceptions.UsernameAlreadyExists;
 import ecommerce.web.app.service.UserService;
 import ecommerce.web.app.service.auth.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@SecurityRequirement(name = "Bearer Authentication")
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @CrossOrigin("*")
