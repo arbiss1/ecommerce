@@ -49,22 +49,22 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 		return config.getAuthenticationManager();
 	}
 
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//		http.csrf(AbstractHttpConfigurer::disable)
-//				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
-//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//				.authorizeRequests()
-//				.requestMatchers("/api/**").permitAll()
-//				.requestMatchers("/**").permitAll()
-//				.anyRequest().permitAll();
-//
-//		http.authenticationProvider(authenticationProvider());
-//
-//		http.addFilterBefore(new JwtFilter(userService), UsernamePasswordAuthenticationFilter.class);
-//
-//		return http.build();
-//	}
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(AbstractHttpConfigurer::disable)
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeRequests()
+				.requestMatchers("/api/**").permitAll()
+				.requestMatchers("/**").permitAll()
+				.anyRequest().permitAll();
+
+		http.authenticationProvider(authenticationProvider());
+
+		http.addFilterBefore(new JwtFilter(userService), UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
@@ -78,12 +78,7 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 				)
 				.csrf().disable()
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
-				.sessionManagement(session -> session
-						.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-						.maximumSessions(1)
-						.expiredUrl("/api/user/authenticate")
-						.sessionRegistry(sessionRegistry())
-				)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider());
 	}
 
