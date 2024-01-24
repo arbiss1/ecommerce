@@ -1,7 +1,7 @@
 package ecommerce.web.app.service;
 
 import ecommerce.web.app.client.CarsApiClient;
-import ecommerce.web.app.client.model.ManufacturerInfo;
+import ecommerce.web.app.model.ManufacturerInfo;
 import ecommerce.web.app.controller.model.CarBrands;
 import ecommerce.web.app.controller.model.CarModels;
 import ecommerce.web.app.controller.model.CarType;
@@ -100,7 +100,6 @@ public class CarInfoService {
                 "Hatchback",
                 "SUV",
                 "Coupe",
-                "Sedan",
                 "Truck",
                 "Crossover",
                 "Sports car",

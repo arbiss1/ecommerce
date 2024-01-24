@@ -28,6 +28,8 @@ public class PostRequest {
     private String type;
     @NotEmpty(message = "Brand must not be empty")
     private String brand;
+    @NotEmpty(message = "Model must not be empty")
+    private String model;
     @NotEmpty(message = "Color must not be empty")
     private String color;
     @NotEmpty(message = "Transmission must not be empty")

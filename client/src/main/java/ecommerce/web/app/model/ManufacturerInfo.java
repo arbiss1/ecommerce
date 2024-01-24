@@ -1,4 +1,4 @@
-package ecommerce.web.app.client.model;
+package ecommerce.web.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

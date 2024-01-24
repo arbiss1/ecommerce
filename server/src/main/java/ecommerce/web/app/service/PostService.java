@@ -132,6 +132,7 @@ public class PostService {
         post.setPower(postRequest.getPower());
         post.setTransmission(postRequest.getTransmission());
         post.setType(postRequest.getType());
+        post.setModel(postRequest.getModel());
         post.setPostType(postRequest.getPostType());
         return post;
     }
@@ -150,7 +151,22 @@ public class PostService {
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),
+                post.getPostType(),
+                post.getCurrency(),
+                post.getPostAdvertIndex(),
+                post.getType(),
+                post.getBrand(),
+                post.getModel(),
+                post.getColor(),
+                post.getTransmission(),
+                post.getKilometers(),
+                post.getFuel(),
+                post.getPower(),
                 post.getPrice(),
+                post.getFirstRegistration(),
+                post.getEngineSize(),
+                post.getCreatedAt(),
+                post.getModifiedAt(),
                 images
         );
     }

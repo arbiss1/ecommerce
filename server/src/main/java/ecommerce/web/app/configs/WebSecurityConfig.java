@@ -65,21 +65,21 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 		return http.build();
 	}
 
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
-		http
-				.addFilterBefore(new JwtFilter(userService), UsernamePasswordAuthenticationFilter.class)
-				.authorizeRequests(authorizeRequests ->
-						authorizeRequests
-								.requestMatchers("/api/**").permitAll()
-								.requestMatchers("/**").permitAll()
-								.anyRequest().permitAll()
-				)
-				.csrf().disable()
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authenticationProvider(authenticationProvider());
-	}
+//	@Override
+//	public void configure(HttpSecurity http) throws Exception {
+//		http
+//				.addFilterBefore(new JwtFilter(userService), UsernamePasswordAuthenticationFilter.class)
+//				.authorizeRequests(authorizeRequests ->
+//						authorizeRequests
+//								.requestMatchers("/api/**").permitAll()
+//								.requestMatchers("/**").permitAll()
+//								.anyRequest().permitAll()
+//				)
+//				.csrf().disable()
+//				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
+//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//				.authenticationProvider(authenticationProvider());
+//	}
 
 	@Bean
 	public SessionRegistry sessionRegistry() {
