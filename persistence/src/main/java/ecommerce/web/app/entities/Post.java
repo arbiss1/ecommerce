@@ -39,6 +39,7 @@ public class Post {
     private String price;
     private String firstRegistration;
     private String engineSize;
+    private Boolean isFavorite;
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;

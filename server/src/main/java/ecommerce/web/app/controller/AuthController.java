@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 @CrossOrigin("*")
+@PreAuthorize("permitAll()")
 public class AuthController {
     private final UserService userService;
     private final AuthService authenticationService;

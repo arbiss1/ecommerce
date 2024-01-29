@@ -29,11 +29,4 @@ public class PostDetails {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<String> images;
-
-    public PostDetails(String id, String title, String description, String price) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-    }
 }

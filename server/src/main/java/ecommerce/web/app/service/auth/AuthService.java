@@ -10,15 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
-import javax.naming.AuthenticationException;
 import java.util.Locale;
 
 @Service
@@ -28,7 +22,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     public final MessageSource messageByLocale;
-    public BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Locale locale = Locale.ENGLISH;
 
     public AuthUserResponse authenticate(AuthUserRequest request, BindingResult result) throws UsernameAlreadyExists {

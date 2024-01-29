@@ -1,6 +1,8 @@
 package ecommerce.web.app.controller.model;
 
+import ecommerce.web.app.enums.Fuel;
 import ecommerce.web.app.enums.PostType;
+import ecommerce.web.app.enums.Transmission;
 import lombok.Data;
 
 @Data
@@ -8,10 +10,11 @@ public class SearchBuilderRequest {
     private PostType postType;
     private String type;
     private String brand;
+    private String model;
     private String color;
-    private String transmission;
+    private Transmission transmission;
     private String kilometers;
-    private String fuel;
+    private Fuel fuel;
     private String power;
     private String lowestPrice;
     private String highestPrice;

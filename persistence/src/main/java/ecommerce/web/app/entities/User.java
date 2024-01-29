@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -64,7 +65,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>(Arrays.asList(new SimpleGrantedAuthority("ROLE_" + "ADMIN"), new SimpleGrantedAuthority("ROLE_" + "USER")));
+        return new ArrayList<>(List.of(new SimpleGrantedAuthority("ROLE_" + getRole())));
     }
 
     @Override

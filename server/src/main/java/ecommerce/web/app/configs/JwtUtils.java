@@ -9,9 +9,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import javax.naming.AuthenticationException;
 import java.security.Key;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +27,7 @@ public class JwtUtils {
     private long jwtExpiration;
 
     public String generateToken(UserDetails user) {
+        SecretKey key = Keys.hmacShaKeyFor(getSignInKey().getEncoded());
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
         claims.put("username", user.getUsername());
@@ -34,7 +35,7 @@ public class JwtUtils {
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+jwtExpiration))
-                .signWith(SignatureAlgorithm.HS256, getSignInKey())
+                .signWith(key)
                 .compact();
     }
 
@@ -75,9 +76,5 @@ public class JwtUtils {
 
     public void handleLogout(String jwt) {
         JwtUtils.blacklistToken(jwt);
-    }
-
-    public LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {
-        return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
     }
 }

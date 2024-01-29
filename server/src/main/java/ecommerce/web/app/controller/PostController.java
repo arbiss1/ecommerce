@@ -12,19 +12,21 @@ import ecommerce.web.app.service.PostService;
 import ecommerce.web.app.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
 @CrossOrigin("*")
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
+@PreAuthorize("permitAll()")
 public class PostController {
     public final UserService userService;
     public final PostService postService;
@@ -42,18 +44,28 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PostDetails>> list() {
-            return ResponseEntity.ok(postService.findAll());
+    public ResponseEntity<Page<PostDetails>> list(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "20") Integer size
+    ) {
+            return ResponseEntity.ok(postService.findAll(page, size));
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<PostDetails>> search(@RequestBody SearchBuilderRequest searchBuilderRequest) {
-            return ResponseEntity.ok(postService.search(searchBuilderRequest));
+    public ResponseEntity<Page<PostDetails>> search(
+            @RequestBody SearchBuilderRequest searchBuilderRequest,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "20") Integer size
+    ) {
+            return ResponseEntity.ok(postService.search(searchBuilderRequest, page, size));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<PostDetails>> listByUser() throws UserNotFoundException, AuthenticationException {
-            return ResponseEntity.ok(postService.listByUser(userService.getAuthenticatedUser().getId()));
+    public ResponseEntity<Page<PostDetails>> listByUser(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "20") Integer size
+    ) throws UserNotFoundException, AuthenticationException {
+            return ResponseEntity.ok(postService.listByUser(userService.getAuthenticatedUser().getId(), page, size));
     }
 
     @PutMapping("/edit/{postId}")

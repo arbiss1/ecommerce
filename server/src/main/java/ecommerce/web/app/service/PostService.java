@@ -13,11 +13,13 @@ import ecommerce.web.app.repository.PostRepository;
 import ecommerce.web.app.entities.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +29,6 @@ public class PostService {
     public final SearchService searchService;
     public final MessageSource messageByLocale;
     public final ImageUploadService imageUploadService;
-    private final Locale locale = Locale.ENGLISH;
 
     public PostResponse save(PostRequest postRequest, User userAuth, List<String> postsImageUrls, BindingResult result
     ) throws BindingException, ImageCustomException {
@@ -46,18 +47,11 @@ public class PostService {
         }
         Optional<Post> findPost = postRepository.findById(postId);
         if (findPost.isPresent()) {
-            Post editablePost = findPost.get();
-            editablePost.setPrice(postRequest.getPrice());
-            editablePost.setDescription(postRequest.getDescription());
-            editablePost.setCurrency(postRequest.getCurrency().mapToStatus());
-            editablePost.setTitle(postRequest.getTitle());
-            editablePost.setModifiedBy(authUser.getUsername());
-            editablePost.setModifiedAt(LocalDateTime.now());
+            Post editablePost = mapToPost(postRequest, authUser);
+            editablePost.setId(findPost.get().getId());
             return new PostResponse(postRepository.save(editablePost).getId());
         } else {
-            throw new PostCustomException(messageByLocale.getMessage(
-                    "error.409.postNotPostedServerError", null, locale)
-            );
+            throw new PostCustomException(buildError("error.409.postServerError"));
         }
     }
 
@@ -66,46 +60,54 @@ public class PostService {
         if (findIfPostExist.isPresent()) {
             findIfPostExist.get().setStatus(PostStatus.ACTIVE.mapToStatus());
         } else {
-            throw new PostCustomException(
-                    messageByLocale.getMessage("error.404.postNotFound", null, locale)
-            );
+            throw new PostCustomException(buildError("error.404.postNotFound"));
         }
         return postRepository.save(findIfPostExist.get()).getId();
     }
 
-    public List<PostDetails> findAll() {
-        List<PostDetails> postDetails = new ArrayList<>();
-        List<String> images = new ArrayList<>();
-        for (Post post : postRepository.findAll()) {
-            for (ImageUpload image : imageUploadService.getImages(post)) {
-                images.add(image.getProfileImage());
-            }
-            postDetails.add(mapToPostDetail(post, images));
-            images = new ArrayList<>();
-        }
-       return postDetails;
+    public Page<PostDetails> findAll(Integer page, Integer size) {
+        Page<Post> postPage = postRepository.findAll(PageRequest.of(page, size));
+        List<PostDetails> postDetailsList = postPage.getContent().stream()
+                .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
+                        .stream().map(String::valueOf).toList()))
+                .toList();
+
+        return new PageImpl<>(postDetailsList, postPage.getPageable(), postPage.getTotalElements());
     }
 
-    public List<PostDetails> search(SearchBuilderRequest searchBuilderRequest) {
+
+    public Page<PostDetails> search(SearchBuilderRequest searchBuilderRequest, Integer page, Integer size) {
         if (searchBuilderRequest == null) {
-            return mapToPostDetails(postRepository.findAll());
+            Page<Post> postPage = postRepository.findAll(PageRequest.of(page, size));
+            List<PostDetails> postDetailsList = postPage.getContent().stream()
+                    .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
+                            .stream().map(String::valueOf).toList()))
+                    .toList();
+
+            return new PageImpl<>(postDetailsList, postPage.getPageable(), postPage.getTotalElements());
         }
-        List<Post> response = searchService.searchPosts(searchBuilderRequest);
-        return mapToPostDetails(response);
+        Page<Post> response = searchService.searchPosts(searchBuilderRequest, page, size);
+        List<PostDetails> postDetailsList = response.stream()
+                .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
+                        .stream().map(String::valueOf).toList()))
+                .toList();
+
+        return new PageImpl<>(postDetailsList, response.getPageable(), response.getTotalElements());
     }
 
-    public List<PostDetails> listByUser(String userId) {
-        return mapToPostDetails(postRepository.findByUserId(userId));
-    }
+    public Page<PostDetails> listByUser(String userId, Integer page, Integer size) {
+        Page<Post> postPage = postRepository.findByUserId(userId, PageRequest.of(page, size));
+        List<PostDetails> postDetailsList = postPage.getContent().stream()
+                .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
+                        .stream().map(String::valueOf).toList()))
+                .toList();
 
-    public Optional<Post> findByPostId(String postId) {
-        return postRepository.findById(postId);
+        return new PageImpl<>(postDetailsList, postPage.getPageable(), postPage.getTotalElements());
     }
 
     public void deleteById(String postId) throws PostCustomException {
         Post findPost = postRepository.findById(postId).orElseThrow(() ->
-                new PostCustomException(
-                        messageByLocale.getMessage("error.404.postNotFound", null, locale)));
+                new PostCustomException(buildError("error.404.postNotFound")));
         imageUploadService.deleteImages(findPost);
         postRepository.deleteById(findPost.getId());
     }
@@ -137,15 +139,6 @@ public class PostService {
         return post;
     }
 
-    public List<PostDetails> mapToPostDetails(List<Post> posts){
-        return posts.stream().map(post -> new PostDetails(
-                post.getId(),
-                post.getTitle(),
-                post.getDescription(),
-                post.getPrice()
-        )).collect(Collectors.toList());
-    }
-
     public PostDetails mapToPostDetail(Post post, List<String> images){
         return new PostDetails(
                 post.getId(),
@@ -171,4 +164,7 @@ public class PostService {
         );
     }
 
+    private String buildError(String message) {
+        return messageByLocale.getMessage(message, null, Locale.ENGLISH);
+    }
 }

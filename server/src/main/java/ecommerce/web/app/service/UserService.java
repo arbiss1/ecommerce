@@ -27,60 +27,39 @@ public class UserService {
     public final UserRepository userRepository;
     private final MessageSource messageByLocale;
 
-    public UserService(UserRepository userRepository, MessageSource messageByLocale){
+    public UserService(UserRepository userRepository, MessageSource messageByLocale) {
         this.userRepository = userRepository;
         this.messageByLocale = messageByLocale;
     }
-
     PasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    private final Locale locale = Locale.ENGLISH;
 
     public GetUserResponse get() throws UserNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> findUser = userRepository.findByUsername(userDetails.getUsername());
-        if(findUser.isEmpty()){
-            throw new UserNotFoundException(
-                    messageByLocale.getMessage("error.404.userNotFound", null, locale)
-            );
+        if (findUser.isEmpty()) {
+            throw new UserNotFoundException(buildError("error.404.userNotFound"));
         }
         User user = findUser.get();
-        return new GetUserResponse(
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getCity(),
-                user.getCountry(),
-                user.getEmail(),
-                user.getPhoneNumber(),
-                user.getAddress()
-        );
+        return new GetUserResponse(user.getUsername(), user.getFirstName(), user.getLastName(), user.getCity(), user.getCountry(), user.getEmail(), user.getPhoneNumber(), user.getAddress());
     }
 
-    public User getByUsername(String username){
+    public User getByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public void deleteUser(String userId) throws UserNotFoundException{
-        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(messageByLocale.getMessage(
-                "error.404.userNotFound", null, locale)
-        ));
+    public void deleteUser(String userId) throws UserNotFoundException {
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(buildError("error.404.userNotFound")));
         userRepository.deleteById(findUser.getId());
     }
 
     public UserResponse save(UserRequest userRequest, BindingResult result) throws UsernameAlreadyExists {
         if (result.hasErrors()) {
-            throw new UsernameAlreadyExists(
-                    messageByLocale.getMessage(result.getAllErrors().toString(), null, locale)
-            );
+            throw new UsernameAlreadyExists(buildError(result.getAllErrors().toString()));
         }
-        Optional<User> findIfUserIsIdentified = userRepository.findByUsernameOrEmailOrPhoneNumber(
-                userRequest.getUsername(),
-                userRequest.getEmail(),
-                userRequest.getPhoneNumber()
-        );
+        Optional<User> findIfUserIsIdentified = userRepository.findByUsernameOrEmailOrPhoneNumber(userRequest.getUsername(), userRequest.getEmail(), userRequest.getPhoneNumber());
 
-        if(findIfUserIsIdentified.isPresent()){
-            throw new UsernameAlreadyExists(messageByLocale.getMessage("error.409.duplicatedInfo",null,locale));
+        if (findIfUserIsIdentified.isPresent()) {
+            throw new UsernameAlreadyExists(buildError("error.409.duplicatedInfo"));
         }
 
         User user = mapUser(userRequest);
@@ -94,23 +73,15 @@ public class UserService {
 
     public User getAuthenticatedUser() throws UserNotFoundException, AuthenticationException {
         UserDetails userDetails;
-        try{
-            userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                    .getPrincipal();
-        }catch (Exception e){
-            throw new AuthenticationException(
-                    messageByLocale.getMessage(
-                            "error.401.auth", null, locale));
+        try {
+            userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e){
+            throw new AuthenticationException(buildError("error.401.auth"));
         }
-
-        String username = userDetails.getUsername();
-        return userRepository.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException(messageByLocale.getMessage(
-                "error.404.userNotFound", null, locale)
-        ));
+        return userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UserNotFoundException(buildError("error.404.userNotFound")));
     }
 
-    public User mapUser(UserRequest userRequest){
+    public User mapUser(UserRequest userRequest) {
         return new User(
                 userRequest.getUsername(),
                 userRequest.getPassword(),
@@ -123,5 +94,9 @@ public class UserService {
                 userRequest.getAddress(),
                 "USER"
         );
+    }
+
+    private String buildError(String message) {
+        return messageByLocale.getMessage(message, null, Locale.ENGLISH);
     }
 }

@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserService userService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws IOException {
         String jwt = null;
         try {
             final String authorizationHeader = request.getHeader("Authorization");
@@ -51,16 +52,16 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (JwtException | AuthenticationException | ServletException e) {
-            httpServletResponse(response, e);
+            httpServletResponse(response);
         }
     }
 
-    private void httpServletResponse(HttpServletResponse response, Exception e) throws IOException {
+    private void httpServletResponse(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, "User is not logged in!", e);
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, "User is not logged in!");
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
