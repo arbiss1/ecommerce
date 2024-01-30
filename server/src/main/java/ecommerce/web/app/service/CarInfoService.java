@@ -8,7 +8,10 @@ import ecommerce.web.app.controller.model.CarType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,15 +19,27 @@ import java.util.stream.Collectors;
 public class CarInfoService {
     private final CarsApiClient carsApiClient;
 
-    public CarModels getCarModels(String limit, String offset, String brand, String keyword) {
-        ManufacturerInfo response = carsApiClient.getAllCarModels(limit, offset, brand);
-        for (int i = 1; i<= response.getTotal_count()/Integer.parseInt(limit) + 1; i++){
-            if(response.getResults().stream().filter(result -> result.getModel().contains(keyword)).toList().isEmpty()){
-                response = carsApiClient.getAllCarModels(limit, offset + i, brand);
-            }
+    public CarModels getCarModels(String limit, String offset, String brand) {
+        int limitValue = Integer.parseInt(limit);
+
+        ManufacturerInfo manufacturerInfo = carsApiClient.getAllCarModels(limit, offset, brand);
+        Set<String> response = manufacturerInfo.getResults().stream()
+                .map(ManufacturerInfo.Result::getModel).sorted()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        int totalCount = manufacturerInfo.getTotal_count();
+        int totalPages = (totalCount / limitValue) + (totalCount % limitValue == 0 ? 0 : 1);
+
+        for (int i = 1; i < totalPages; i++) {
+            int newOffset = i + Integer.parseInt(offset);
+            ManufacturerInfo nextBatch = carsApiClient.getAllCarModels(limit, String.valueOf(newOffset), brand);
+            response.addAll(nextBatch.getResults().stream()
+                    .map(ManufacturerInfo.Result::getModel).sorted()
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
-        return new CarModels(response.getResults().stream().map(ManufacturerInfo.Result::getModel).toList().stream().filter(s -> s.contains(keyword)).collect(Collectors.toSet()));
+        return new CarModels(response);
     }
+
 
     public CarBrands getCarBrands(){
         return new CarBrands(List.of( "Abarth",

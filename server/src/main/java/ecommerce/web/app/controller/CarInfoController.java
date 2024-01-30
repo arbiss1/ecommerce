@@ -24,10 +24,9 @@ public class CarInfoController {
     public ResponseEntity<CarModels> getCarModels(
             @RequestParam(name = "limit", defaultValue = "100") String limit,
             @RequestParam(name = "offset", defaultValue = "0") String offset,
-            @RequestParam(name = "brand") String brand,
-            @RequestParam(name = "keyword", required = false) String keyword
+            @RequestParam(name = "brand") String brand
     ){
-        return ResponseEntity.ok(carInfoService.getCarModels(limit, offset, brand, keyword));
+        return ResponseEntity.ok(carInfoService.getCarModels(limit, offset, brand));
     }
 
     @GetMapping("/brands")
