@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class FavoritesDetails {
+public class FavoriteDetails {
     private String id;
     private String title;
     private String description;

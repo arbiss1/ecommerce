@@ -1,10 +1,7 @@
 package ecommerce.web.app.service;
 
 import ecommerce.web.app.controller.enums.PostStatus;
-import ecommerce.web.app.controller.model.PostResponse;
-import ecommerce.web.app.controller.model.PostDetails;
-import ecommerce.web.app.controller.model.PostRequest;
-import ecommerce.web.app.controller.model.SearchBuilderRequest;
+import ecommerce.web.app.controller.model.*;
 import ecommerce.web.app.enums.AdvertIndex;
 import ecommerce.web.app.exceptions.BindingException;
 import ecommerce.web.app.exceptions.ImageCustomException;
@@ -40,16 +37,17 @@ public class PostService {
         return new PostResponse(post.getId());
     }
 
-    public PostResponse edit(String postId, PostRequest postRequest, User authUser, BindingResult result)
+    public EditPostResponse editPostDetails(String postId, EditPostRequest editPostRequest, User authUser, BindingResult result)
             throws PostCustomException, BindingException {
         if (result.hasErrors()) {
             throw new BindingException(result.getAllErrors().toString());
         }
         Optional<Post> findPost = postRepository.findById(postId);
         if (findPost.isPresent()) {
-            Post editablePost = mapToPost(postRequest, authUser);
+            Post editablePost = editPostDetails(findPost.get(), editPostRequest, authUser);
+            editablePost.setIsFavorite(findPost.get().getIsFavorite());
             editablePost.setId(findPost.get().getId());
-            return new PostResponse(postRepository.save(editablePost).getId());
+            return new EditPostResponse(postRepository.save(editablePost).getId());
         } else {
             throw new PostCustomException(buildError("error.409.postServerError"));
         }
@@ -136,6 +134,28 @@ public class PostService {
         post.setType(postRequest.getType());
         post.setModel(postRequest.getModel());
         post.setPostType(postRequest.getPostType());
+        post.setIsFavorite(false);
+        return post;
+    }
+
+    private Post editPostDetails(Post post, EditPostRequest editPostRequest, User getAuthenticatedUser){
+        post.setModifiedBy(getAuthenticatedUser.getUsername());
+        post.setModifiedAt(LocalDateTime.now());
+        if(editPostRequest.getCurrency() != null) post.setCurrency(editPostRequest.getCurrency().mapToStatus());
+        if(editPostRequest.getDescription() != null) post.setDescription(editPostRequest.getDescription());
+        if(editPostRequest.getPrice() != null) post.setPrice(editPostRequest.getPrice());
+        if(editPostRequest.getTitle() != null) post.setTitle(editPostRequest.getTitle());
+        if(editPostRequest.getBrand() != null) post.setBrand(editPostRequest.getBrand());
+        if(editPostRequest.getEngineSize() != null) post.setEngineSize(editPostRequest.getEngineSize());
+        if(editPostRequest.getFirstRegistration() != null) post.setFirstRegistration(editPostRequest.getFirstRegistration());
+        if(editPostRequest.getFuel() != null) post.setFuel(editPostRequest.getFuel());
+        if(editPostRequest.getColor() != null) post.setColor(editPostRequest.getColor());
+        if(editPostRequest.getKilometers() != null) post.setKilometers(editPostRequest.getKilometers());
+        if(editPostRequest.getPower() != null) post.setPower(editPostRequest.getPower());
+        if(editPostRequest.getTransmission() != null) post.setTransmission(editPostRequest.getTransmission());
+        if(editPostRequest.getType() != null) post.setType(editPostRequest.getType());
+        if(editPostRequest.getModel() != null) post.setModel(editPostRequest.getModel());
+        if(editPostRequest.getPostType() != null) post.setPostType(editPostRequest.getPostType());
         return post;
     }
 

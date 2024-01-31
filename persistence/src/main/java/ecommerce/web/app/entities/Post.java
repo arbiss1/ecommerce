@@ -21,6 +21,7 @@ public class Post {
     private String id;
     private String title;
     private String description;
+    @Enumerated(EnumType.STRING)
     private PostType postType;
     @Enumerated(EnumType.STRING)
     private Currency currency;

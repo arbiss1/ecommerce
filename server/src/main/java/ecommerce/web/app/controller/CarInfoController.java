@@ -2,7 +2,7 @@ package ecommerce.web.app.controller;
 
 import ecommerce.web.app.controller.model.CarBrands;
 import ecommerce.web.app.controller.model.CarModels;
-import ecommerce.web.app.controller.model.CarType;
+import ecommerce.web.app.controller.model.CarTypes;
 import ecommerce.web.app.service.CarInfoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class CarInfoController {
             @RequestParam(name = "limit", defaultValue = "100") String limit,
             @RequestParam(name = "offset", defaultValue = "0") String offset,
             @RequestParam(name = "brand") String brand
-    ){
+    ) throws Exception {
         return ResponseEntity.ok(carInfoService.getCarModels(limit, offset, brand));
     }
 
@@ -35,7 +35,7 @@ public class CarInfoController {
     }
 
     @GetMapping("/types")
-    public ResponseEntity<CarType> getCarTypes(){
+    public ResponseEntity<CarTypes> getCarTypes(){
         return ResponseEntity.ok(carInfoService.getCarTypes());
     }
 }

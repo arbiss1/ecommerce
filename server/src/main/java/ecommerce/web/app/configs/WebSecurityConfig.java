@@ -57,6 +57,7 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 		http.authenticationProvider(authenticationProvider());
 
 		http.addFilterBefore(new JwtFilter(userService), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new CorsFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

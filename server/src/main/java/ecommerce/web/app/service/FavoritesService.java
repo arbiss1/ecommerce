@@ -43,13 +43,13 @@ public class FavoritesService {
         postRepository.save(post);
     }
 
-    public Page<FavoritesDetails> show(Integer page, Integer size) throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
+    public Page<FavoriteDetails> show(Integer page, Integer size) throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
         Page<Post> response = postRepository.findAllByUserAndIsFavoriteTrue(PageRequest.of(page, size), userService.getAuthenticatedUser());
         if(response.isEmpty()){
             throw new FavoritesCustomException(buildError("error.404.noFavoritesFound"));
         }
 
-        List<FavoritesDetails> mappedPostDetails = response.stream()
+        List<FavoriteDetails> mappedPostDetails = response.stream()
                 .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
                         .stream().map(String::valueOf).toList()))
                 .toList();
@@ -57,10 +57,10 @@ public class FavoritesService {
         return new PageImpl<>(mappedPostDetails, response.getPageable(), response.getTotalElements());
     }
 
-    public Page<FavoritesDetails> search(SearchBuilderRequest searchBuilderRequest, Integer page, Integer size) throws UserNotFoundException, AuthenticationException {
+    public Page<FavoriteDetails> search(SearchBuilderRequest searchBuilderRequest, Integer page, Integer size) throws UserNotFoundException, AuthenticationException {
         if (searchBuilderRequest == null) {
             Page<Post> postPage = postRepository.findAllByUserAndIsFavoriteTrue(PageRequest.of(page, size), userService.getAuthenticatedUser());
-            List<FavoritesDetails> postDetailsList = postPage.getContent().stream()
+            List<FavoriteDetails> postDetailsList = postPage.getContent().stream()
                     .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
                             .stream().map(String::valueOf).toList()))
                     .toList();
@@ -68,7 +68,7 @@ public class FavoritesService {
             return new PageImpl<>(postDetailsList, postPage.getPageable(), postPage.getTotalElements());
         }
         Page<Post> response = searchService.searchPosts(searchBuilderRequest, page, size);
-        List<FavoritesDetails> postDetailsList = response.stream()
+        List<FavoriteDetails> postDetailsList = response.stream()
                 .map(post -> mapToPostDetail(post, imageUploadService.getImages(post)
                         .stream().map(String::valueOf).toList()))
                 .toList();
@@ -76,8 +76,8 @@ public class FavoritesService {
         return new PageImpl<>(postDetailsList, response.getPageable(), response.getTotalElements());
     }
 
-    public FavoritesDetails mapToPostDetail(Post post, List<String> images){
-        return new FavoritesDetails(
+    public FavoriteDetails mapToPostDetail(Post post, List<String> images){
+        return new FavoriteDetails(
                 post.getId(),
                 post.getTitle(),
                 post.getDescription(),

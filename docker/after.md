@@ -1,5 +1,5 @@
 - into docker container:\
-`docker exec -it artexhibit-app bash`
+`docker exec -it ecommerce-app bash`
 
 
 ### docker start:

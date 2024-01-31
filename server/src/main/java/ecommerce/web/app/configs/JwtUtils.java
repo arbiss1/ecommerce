@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JwtUtils {
-
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
     @Value("${application.security.jwt.expiration}")

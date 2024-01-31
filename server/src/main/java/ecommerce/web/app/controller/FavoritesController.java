@@ -23,7 +23,7 @@ public class FavoritesController {
     public final FavoritesService favoritesService;
 
     @GetMapping()
-    public ResponseEntity<Page<FavoritesDetails>> show(
+    public ResponseEntity<Page<FavoriteDetails>> show(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "20") Integer size
     ) throws FavoritesCustomException, UserNotFoundException, AuthenticationException {
@@ -31,7 +31,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<FavoritesDetails>> search(
+    public ResponseEntity<Page<FavoriteDetails>> search(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "20") Integer size,
             @RequestParam SearchBuilderRequest searchBuilderRequest

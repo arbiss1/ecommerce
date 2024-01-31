@@ -17,7 +17,7 @@ services:
       - "${DB_PORT}:3306"
     environment:
       - MYSQL_DATABASE=ecommerce_db
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_ROOT_USER=root
       - SERVICE_TAGS=dev
       - SERVICE_NAME=mysql

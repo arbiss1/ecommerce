@@ -8,12 +8,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
 public class Configs {
-
     @Bean
     public LocalValidatorFactoryBean validatorFactoryBean() {
         return new LocalValidatorFactoryBean();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

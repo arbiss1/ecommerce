@@ -1,9 +1,6 @@
 package ecommerce.web.app.controller;
 
-import ecommerce.web.app.controller.model.PostResponse;
-import ecommerce.web.app.controller.model.PostDetails;
-import ecommerce.web.app.controller.model.PostRequest;
-import ecommerce.web.app.controller.model.SearchBuilderRequest;
+import ecommerce.web.app.controller.model.*;
 import ecommerce.web.app.exceptions.BindingException;
 import ecommerce.web.app.exceptions.ImageCustomException;
 import ecommerce.web.app.exceptions.PostCustomException;
@@ -69,8 +66,8 @@ public class PostController {
     }
 
     @PutMapping("/edit/{postId}")
-    public ResponseEntity<PostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody PostRequest postRequest, BindingResult result) throws PostCustomException, UserNotFoundException, AuthenticationException, BindingException {
-            return ResponseEntity.ok(postService.edit(postId, postRequest, userService.getAuthenticatedUser(), result));
+    public ResponseEntity<EditPostResponse> edit(@PathVariable(name = "postId") String postId, @RequestBody EditPostRequest editPostRequest, BindingResult result) throws PostCustomException, UserNotFoundException, AuthenticationException, BindingException {
+            return ResponseEntity.ok(postService.editPostDetails(postId, editPostRequest, userService.getAuthenticatedUser(), result));
     }
 
     @DeleteMapping("/delete/{postId}")

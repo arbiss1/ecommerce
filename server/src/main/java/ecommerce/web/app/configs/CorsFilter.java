@@ -1,43 +1,31 @@
-//package ecommerce.web.app.configs;
-//
-//import org.springframework.core.annotation.Order;
-//import org.springframework.stereotype.Component;
-//
-//import javax.servlet.*;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//import java.io.IOException;
-//
-//@Order(1)
-//@Component
-//public class CorsFilter implements Filter {
-//
-//	@Override
-//	public void init(FilterConfig filterConfig) {
-//	}
-//
-//	@Override
-//	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-//			throws IOException, ServletException {
-//		HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-//
-//		httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-//		httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE, PATCH");
-//		httpServletResponse.setHeader("Access-Control-Max-Age", "3600");
-//		httpServletResponse.setHeader("Access-Control-Allow-Headers",
-//				"Origin, X-Requested-With, Content-Type, Accept, Authorization, securitytype");
-//		httpServletResponse.setHeader("Access-Control-Expose-Headers", "Location");
-//
-//		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-//
-//		if ("OPTIONS".equals(httpServletRequest.getMethod())) {
-//			httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-//		} else {
-//			filterChain.doFilter(servletRequest, servletResponse);
-//		}
-//	}
-//
-//	@Override
-//	public void destroy() {
-//	}
-//}
+package ecommerce.web.app.configs;
+
+import org.jetbrains.annotations.NotNull;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.filter.OncePerRequestFilter;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@Order(1)
+public class CorsFilter extends OncePerRequestFilter {
+	@Override
+	public void destroy() {
+	}
+
+	@Override
+	protected void doFilterInternal(jakarta.servlet.http.@NotNull HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
+
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE, PATCH");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers",
+				"Origin, X-Requested-With, Content-Type, Accept, Authorization, securitytype");
+		response.setHeader("Access-Control-Expose-Headers", "Location");
+
+		if ("OPTIONS".equals(request.getMethod())) {
+			response.setStatus(HttpServletResponse.SC_OK);
+		} else {
+			filterChain.doFilter(request, response);
+		}
+	}
+}
